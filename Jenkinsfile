@@ -34,6 +34,15 @@ pipeline {
                 }
             }
         }
+        stage('Deploy to GCP VM') {
+        steps {
+        sshagent(['gcp-ssh-credentials']) {
+        sh '''
+        ssh -o StrictHostKeyChecking=no abuabdillah5444@35.192.138.52 "docker pull aatikah/vul-djangoapp:latest && docker run -d -p 8000:8000 aatikah/vul-djangoapp:latest"
+        '''
+    }
+    }
+}
         
         
     }
