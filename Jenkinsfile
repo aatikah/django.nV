@@ -4,7 +4,7 @@ pipeline {
     environment {
         REGISTRY = 'https://index.docker.io/v1/'
         REPOSITORY = 'aatikah'
-        IMAGE_NAME = 'portfolio-website'
+        IMAGE_NAME = 'vul-django'
         DOCKER_CREDENTIALS_ID = 'docker-credential'
     }
     
@@ -22,6 +22,15 @@ pipeline {
             steps {
                 script {
                     dockerImage = docker.build("${REPOSITORY}/${IMAGE_NAME}")
+                }
+            }
+        }
+         stage('Push Docker Image') {
+            steps {
+                script {
+                    docker.withRegistry("${REGISTRY}", DOCKER_CREDENTIALS_ID) {
+                        dockerImage.push('latest')
+                    }
                 }
             }
         }
