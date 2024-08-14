@@ -20,6 +20,10 @@ ENV DEBUG=True
 # Expose the port that the app runs on
 EXPOSE 8000
 
+# Run migrations and collect static files
+RUN python manage.py migrate
+RUN python manage.py collectstatic --noinput
+
 
 # Run manage.py
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
