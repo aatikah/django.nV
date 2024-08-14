@@ -1,6 +1,8 @@
 pipeline {
     agent any 
-   
+   tools{
+       maven 'Maven'
+   }
     environment {
         REGISTRY = 'https://index.docker.io/v1/'
         REPOSITORY = 'aatikah'
@@ -17,8 +19,14 @@ pipeline {
                 ''' 
             }
         }
-        
+        stage ('Clean Build') {
+          steps {
+          sh 'mvn clean package'
+       }
+    }
         stage('Build Docker Image') {
+
+            
             steps {
                 script {
                     dockerImage = docker.build("${REPOSITORY}/${IMAGE_NAME}")
