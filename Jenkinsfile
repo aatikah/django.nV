@@ -20,49 +20,49 @@ pipeline {
             }
         }
         
-        //stage('Check Git Secrets With Gitleaks With Error Continue') {
-       // steps {
-          //  script {
+        stage('Check Git Secrets With Gitleaks With Error Continue') {
+        steps {
+            script {
                 
                 //Remove any existing report file
-                //sh 'rm -f gitleaks_report.json'
-                
-                // Pull the Gitleaks Docker image
-                //sh 'sudo docker pull zricethezav/gitleaks'
-                
-                // Run Gitleaks in a Docker container and capture the exit code
-                //def gitleaksStatus = sh(script: 'sudo docker run --rm -v /var/lib/jenkins/workspace/vul-django:/repo zricethezav/gitleaks detect --source /repo --report-path /repo/gitleaks_report.json --report-format json', returnStatus: true)
-                
-               //  Display the Gitleaks report
-               // sh 'cat gitleaks_report.json'
-                
-               //  Handle the Gitleaks exit code
-               // if (gitleaksStatus == 1) {
-                  //  echo 'Leaks found. Review the Gitleaks report for details.'
-                   // }
-                   
-               // }
-          // }
-      //  }
-
-        
-        
-        stage('Check Git Secrets With Gitleaks') {
-            steps {
-                // Remove any existing report file
-                sh 'rm gitleaks_report.json || true'
+                sh 'rm -f gitleaks_report.json'
                 
                 // Pull the Gitleaks Docker image
                 sh 'sudo docker pull zricethezav/gitleaks'
                 
+                // Run Gitleaks in a Docker container and capture the exit code
+                def gitleaksStatus = sh(script: 'sudo docker run --rm -v /var/lib/jenkins/workspace/vul-django:/repo zricethezav/gitleaks detect --source /repo --report-path /repo/gitleaks_report.json --report-format json', returnStatus: true)
+                
+               //  Display the Gitleaks report
+                sh 'cat gitleaks_report.json'
+                
+               //  Handle the Gitleaks exit code
+                if (gitleaksStatus == 1) {
+                    echo 'Leaks found. Review the Gitleaks report for details.'
+                    }
+                   
+                }
+           }
+        }
+
+        
+        
+        //stage('Check Git Secrets With Gitleaks') {
+            //steps {
+                // Remove any existing report file
+               // sh 'rm gitleaks_report.json || true'
+                
+                // Pull the Gitleaks Docker image
+               // sh 'sudo docker pull zricethezav/gitleaks'
+                
                 // Run Gitleaks in a Docker container
                 //sh 'sudo docker run --rm -v /var/lib/jenkins/workspace/vul-django:/repo zricethezav/gitleaks detect --source /repo --exit-code 1 --report-path /repo/gitleaks_report.json --report-format json'
-                sh 'sudo docker run --rm -v /var/lib/jenkins/workspace/vul-django:/repo zricethezav/gitleaks detect --source /repo --report-path /repo/gitleaks_report.json --report-format json'
+                //sh 'sudo docker run --rm -v /var/lib/jenkins/workspace/vul-django:/repo zricethezav/gitleaks detect --source /repo --report-path /repo/gitleaks_report.json --report-format json'
                 
                 // Display the Gitleaks report
-                sh 'cat gitleaks_report.json'
-            }
-        }
+               // sh 'cat gitleaks_report.json'
+           // }
+        //}
         
         stage('Build Docker Image') {
 
@@ -93,11 +93,11 @@ pipeline {
         
         
     }
-    post {
-        always {
+    //post {
+       // always {
             // Clean up after the build
-            deleteDir()
-        }
+           // deleteDir()
+       // }
         
-    }
+    //}
 }
