@@ -61,15 +61,15 @@ pipeline {
             //}
         //}
         
-        stage('Deploy with Docker Compose') {
-            steps {
-                script {
+        //stage('Deploy with Docker Compose') {
+            //steps {
+                //script {
                     // Pull the base image and start services
-                    sh 'docker-compose pull'
-                    sh 'docker-compose up -d --build'
-                }
-            }
-        }
+                   // sh 'docker-compose pull'
+                   //sh 'docker-compose up -d --build'
+              //  }
+           // }
+       // }
 
         stage('Push Docker Image') {
             steps {
