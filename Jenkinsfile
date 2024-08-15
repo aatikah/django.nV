@@ -20,9 +20,9 @@ pipeline {
             }
         }
         
-        stage('Check Git Secrets With Gitleaks With Error Continue') {
-        steps {
-            script {
+        //stage('Check Git Secrets With Gitleaks With Error Continue') {
+       // steps {
+          //  script {
                 
                 //Remove any existing report file
                 //sh 'rm -f gitleaks_report.json'
@@ -39,11 +39,11 @@ pipeline {
                //  Handle the Gitleaks exit code
                // if (gitleaksStatus == 1) {
                   //  echo 'Leaks found. Review the Gitleaks report for details.'
-                    }
+                   // }
                    
-                }
-            }
-        }
+               // }
+          // }
+      //  }
 
         
         
