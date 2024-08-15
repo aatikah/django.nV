@@ -1,6 +1,4 @@
 [[rules]]
-description = "Generic API Key"
-# Adjust the regex as needed to match the specific pattern you want to ignore
-regex = "keyCode.END:r=this.anchors.length-1;"
+description = "Exclude specific files"
 path = "taskManager/static/taskManager/js/jquery-ui-1.9.2.custom.min.js"
-
+regex = "keyCode.END:r=this.anchors.length-1;"
