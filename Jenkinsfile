@@ -97,10 +97,10 @@ pipeline {
         }
     }
     
-    post {
-        always {
+   // post {
+        //always {
             // Clean up after the build
-            deleteDir()
-        }
-    }
+            //deleteDir()
+       // }
+    //}
 }
