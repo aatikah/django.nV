@@ -90,8 +90,8 @@ pipeline {
                     //'''
                     sh '''
                     scp -o StrictHostKeyChecking=no docker-compose.yml abuabdillah5444@34.30.50.129:/home/abuabdillah5444/
-                    ssh -o StrictHostKeyChecking=no abuabdillah5444@34.30.50.129 "sudo cd /home/abuabdillah5444 && docker-compose pull && docker-compose up -d"
-                    '''
+                    ssh -o StrictHostKeyChecking=no abuabdillah5444@34.30.50.129 'sudo sh -c "cd /home/abuabdillah5444 && docker-compose pull && docker-compose up -d"'
+                   '''
                 }
             }
         }
