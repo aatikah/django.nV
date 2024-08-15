@@ -20,14 +20,7 @@ pipeline {
             }
         }
 
-        stage('Check Git Secrets With Trufflehog'){
-            steps{
-                sh 'rm trufflehogscan || true'
-                sh 'sudo docker pull gesellix/trufflehog'
-                sh 'sudo docker run gesellix/trufflehog --json https://github.com/aatikah/django.nV.git > trufflehogscan'
-                sh 'cat trufflehogscan'
-            }
-        }
+        
         stage('Build Docker Image') {
 
             steps {
