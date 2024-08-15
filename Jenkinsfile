@@ -24,7 +24,7 @@ pipeline {
         steps {
             script {
                 
-                //Remove any existing report file
+                //Remove any existing report file with the name
                 sh 'rm -f gitleaks_report.json'
                 
                 // Pull the Gitleaks Docker image
