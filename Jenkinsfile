@@ -61,11 +61,13 @@ pipeline {
             //}
         //}
         
-        stage('Deploy with Docker Compose') {
+        stage('Build Docker Image & Deploy with Docker Compose') {
             steps {
                 script {
+                    // Build the Docker image using docker-compose
+                    sh 'docker-compose build web'
+                    //sh 'docker-compose pull'
                     // Pull the base image and start services
-                    sh 'docker-compose pull'
                    sh 'docker-compose up -d --build'
                 }
             }
