@@ -19,6 +19,30 @@ pipeline {
                 ''' 
             }
         }
+        stage('Check Git Secrets With Gitleaks') {
+            steps {
+                // Remove any existing report file
+                sh 'rm gitleaks_report.json || true'
+                
+                // Pull the Gitleaks Docker image
+                sh 'sudo docker pull zricethezav/gitleaks'
+                
+                // Run Gitleaks in a Docker container
+                sh '''
+                sudo docker run --rm \
+                    -v $(pwd):/https://github.com/aatikah/django.nV.git \
+                    zricethezav/gitleaks \
+                    detect \
+                    --source /repo \
+                    --exit-code 1 \
+                    --report-path /repo/gitleaks_report.json \
+                    --report-format json
+                '''
+                
+                // Display the Gitleaks report
+                sh 'cat gitleaks_report.json'
+            }
+        }
         
 
         
