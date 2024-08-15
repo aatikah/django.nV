@@ -85,8 +85,12 @@ pipeline {
         stage('Deploy to GCP VM') {
             steps {
                 sshagent(['tomcatkey']) {
+                    //sh '''
+                    //ssh -o StrictHostKeyChecking=no abuabdillah5444@34.30.50.129 "docker-compose pull && docker-compose up -d"
+                    //'''
                     sh '''
-                    ssh -o StrictHostKeyChecking=no abuabdillah5444@34.30.50.129 "docker-compose pull && docker-compose up -d"
+                    scp -o StrictHostKeyChecking=no docker-compose.yml abuabdillah5444@34.30.50.129:/home/abuabdillah5444/
+                    ssh -o StrictHostKeyChecking=no abuabdillah5444@34.30.50.129 "cd /home/abuabdillah5444 && docker-compose pull && docker-compose up -d"
                     '''
                 }
             }
