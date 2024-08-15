@@ -56,8 +56,8 @@ pipeline {
                 sh 'sudo docker pull zricethezav/gitleaks'
                 
                 // Run Gitleaks in a Docker container
-                sh 'sudo docker run --rm -v /var/lib/jenkins/workspace/vul-django:/repo zricethezav/gitleaks detect --source /repo --exit-code 1 --report-path /repo/gitleaks_report.json --report-format json'
-
+                //sh 'sudo docker run --rm -v /var/lib/jenkins/workspace/vul-django:/repo zricethezav/gitleaks detect --source /repo --exit-code 1 --report-path /repo/gitleaks_report.json --report-format json'
+                sh 'sudo docker run --rm -v /var/lib/jenkins/workspace/vul-django:/repo zricethezav/gitleaks detect --source /repo --report-path /repo/gitleaks_report.json --report-format json'
                 
                 // Display the Gitleaks report
                 sh 'cat gitleaks_report.json'
