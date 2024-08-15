@@ -39,6 +39,7 @@ pipeline {
                 // Handle the Gitleaks exit code
                 if (gitleaksStatus == 1) {
                     echo 'Leaks found. Review the Gitleaks report for details.'
+                    }
                     */
                 }
             }
