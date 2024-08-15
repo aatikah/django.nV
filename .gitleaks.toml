@@ -1,4 +1,0 @@
-[[rules]]
-description = "Generic API Key"
-path = "taskManager/static/taskManager/js/jquery-ui-1.9.2.custom.min.js"
-regex = "keyCode.END:r=this.anchors.length-1;"
