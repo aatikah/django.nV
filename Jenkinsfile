@@ -43,7 +43,7 @@ pipeline {
                 }
             }
         }
-}
+
         
         
         stage('Check Git Secrets With Gitleaks') {
