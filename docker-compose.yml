@@ -2,9 +2,12 @@ version: '3.8'
 
 services:
   web:
-    image: python:3.9-slim  # Use the official Python image
+    image: aatikah/vul-djangoapp:latest  # Use your Docker Hub repository
     container_name: vul_djangoapp
     working_dir: /taskManager
+    build:
+      context: .
+      dockerfile: Dockerfile  # Ensure you have a Dockerfile in your repo for building the image
     volumes:
       - .:/taskManager  # Mount the current directory to the container's working directory
     environment:
@@ -17,3 +20,4 @@ services:
       pip install --no-cache-dir -r requirements.txt &&
       python manage.py migrate &&
       python manage.py runserver 0.0.0.0:8000"
+
