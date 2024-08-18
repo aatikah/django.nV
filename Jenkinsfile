@@ -63,15 +63,6 @@ pipeline {
                // sh 'cat gitleaks_report.json'
            // }
         //}
-        
-        stage('Build Docker Image') {
-
-            steps {
-                script {
-                    dockerImage = docker.build("${REPOSITORY}/${IMAGE_NAME}")
-                }
-            }
-        }
 
         stage('Source Composition Analysis'){
             steps{
@@ -82,6 +73,17 @@ pipeline {
                 sh 'cat /var/lib/jenkins/OWASP-Dependency-Check/reports/dependency-check-report.xml'
             }
         }
+        
+        stage('Build Docker Image') {
+
+            steps {
+                script {
+                    dockerImage = docker.build("${REPOSITORY}/${IMAGE_NAME}")
+                }
+            }
+        }
+
+        
 
         
          stage('Push Docker Image') {
