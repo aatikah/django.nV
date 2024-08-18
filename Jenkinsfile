@@ -90,7 +90,7 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry("${REGISTRY}", DOCKER_CREDENTIALS_ID) {
-                        dockerImage.push('v3')
+                        dockerImage.push('v5')
                     }
                 }
             }
@@ -99,7 +99,7 @@ pipeline {
         steps {
         sshagent(['tomcatkey']) {
         sh '''
-        ssh -o StrictHostKeyChecking=no abuabdillah5444@34.172.197.22 "sudo docker pull aatikah/vul-djangoapp:v3 && sudo docker run -d -p 9000:8000 aatikah/vul-djangoapp:v1"
+        ssh -o StrictHostKeyChecking=no abuabdillah5444@34.172.197.22 "sudo docker pull aatikah/vul-djangoapp:v5 && sudo docker run -d -p 8001:8000 aatikah/vul-djangoapp:v1"
         '''
     }
     }
