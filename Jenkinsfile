@@ -90,7 +90,7 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry("${REGISTRY}", DOCKER_CREDENTIALS_ID) {
-                        dockerImage.push('v1')
+                        dockerImage.push('v3')
                     }
                 }
             }
