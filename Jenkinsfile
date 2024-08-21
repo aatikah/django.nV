@@ -74,14 +74,15 @@ pipeline {
             }
         }
 
-        stage('SAST'){
-            steps{
-                withSonarQubeEnv('vul-django') {
-                  sh 'mvn sonar:sonar'
-                  
+        stage('SAST') {
+    steps {
+        withSonarQubeEnv('vul-django') {
+            withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
+                sh "mvn sonar:sonar -Dsonar.login=${SONAR_TOKEN}"
             }
         }
-        }
+    }
+}
         stage('Build Docker Image') {
 
             steps {
