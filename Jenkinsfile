@@ -108,43 +108,76 @@ pipeline {
     }
 }
 
-        stage('SAST with Bandit') {
-            steps {
-                script {
+       //stage('SAST with Bandit') {
+           // steps {
+              // script {
                 // Remove any existing Bandit report file
-                sh 'rm -f bandit_report.html'
+               // sh 'rm -f bandit_report.html'
                     
                 // Ensure Bandit is installed in the Jenkins environment
                // sh 'pip install bandit'
                 
                 // Run Bandit on the code directory
-                    sh '''
-                    /home/abuabdillah5444/myenv/bin/bandit -r /var/lib/jenkins/workspace/vul-django -o bandit_report.html -f html
-                    '''
+                  //  sh '''
+                  //  /home/abuabdillah5444/myenv/bin/bandit -r /var/lib/jenkins/workspace/vul-django -o bandit_report.html -f html
+                //  '''
                 //sh 'bandit -r /var/lib/jenkins/workspace/vul-django -o bandit_report.html -f html'
                 
                 // Display the Bandit report
-                    sh 'cat bandit_report.html'
+                   // sh 'cat bandit_report.html'
 
                 // Assuming /var/www/html/bandit_reports is served by your web server
-                    sh 'cp bandit_report.html /var/www/html/bandit_reports/'
+                   // sh 'cp bandit_report.html /var/www/html/bandit_reports/'
                     
                 // Archive the Bandit report as an artifact
-                archiveArtifacts artifacts: 'bandit_report.html', allowEmptyArchive: true
+               // archiveArtifacts artifacts: 'bandit_report.html', allowEmptyArchive: true
 
             // Publish the report using HTML Publisher Plugin
-            publishHTML(target: [
-                reportDir: '',
-                reportFiles: 'bandit_report.html',
-                reportName: 'Bandit Security Report',
-                keepAll: true,
-                alwaysLinkToLastBuild: true
-            ])
-        }
-                echo "Report available at: http://34.28.86.41/bandit_reports/bandit_report.html"
-    }
-}
+            //publishHTML(target: [
+               // reportDir: '',
+              //  reportFiles: 'bandit_report.html',
+               // reportName: 'Bandit Security Report',
+              //  keepAll: true,
+              //  alwaysLinkToLastBuild: true
+           // ])
+        //}
+               // echo "Report available at: http://34.28.86.41/bandit_reports/bandit_report.html"
+   // }
+//}
 
+        stage('SAST with Bandit') {
+            steps {
+                script {
+                    def banditStatus = sh(
+                        script: '/home/abuabdillah5444/myenv/bin/bandit -r /var/lib/jenkins/workspace/vul-django -o bandit_report.html -f html',
+                        returnStatus: true
+                    )
+        
+                    if (banditStatus != 0) {
+                        echo "Bandit found issues in the code. Please review the report at bandit_report.html."
+                        // Optionally, you can fail the build if you want to treat these issues as critical
+                        // error("Bandit scan failed with exit code ${banditStatus}")
+                    }
+                    
+                    // Display the Bandit report
+                    sh 'cat bandit_report.html'
+
+                     // Archive the Bandit report as an artifact
+                    archiveArtifacts artifacts: 'bandit_report.html', allowEmptyArchive: true
+
+                // Publish the report using HTML Publisher Plugin
+                publishHTML(target: [
+                    reportDir: '',
+                    reportFiles: 'bandit_report.html',
+                    reportName: 'Bandit Security Report',
+                    keepAll: true,
+                    alwaysLinkToLastBuild: true
+                ])
+
+                    
+                }
+            }
+        }
 
 
         
