@@ -113,8 +113,9 @@ pipeline {
                 script {
                 // Remove any existing Bandit report file
                 sh 'rm -f bandit_report.html'
+                    
                 // Ensure Bandit is installed in the Jenkins environment
-                sh 'pip install bandit'
+               // sh 'pip install bandit'
                 
                 // Run Bandit on the code directory
                 sh 'bandit -r /var/lib/jenkins/workspace/vul-django -o bandit_report.html -f html'
