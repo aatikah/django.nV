@@ -83,7 +83,7 @@ pipeline {
             withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
                 sh '''
                 export SONAR_TOKEN=${SONAR_TOKEN}
-                mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN
+                mvn sonar:sonar -Dsonar.token=$SONAR_TOKEN
                 '''
             }
         }
