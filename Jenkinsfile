@@ -77,18 +77,38 @@ pipeline {
 
     
 
-       stage('SAST') {
-    steps {
-        withSonarQubeEnv('vul-django') {
-            withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
-                sh '''
-                export SONAR_TOKEN=${SONAR_TOKEN}
-                mvn sonar:sonar -Dsonar.token=$SONAR_TOKEN
-                '''
+       stage('SAST With Sonarqube') {
+        steps {
+            withSonarQubeEnv('vul-django') {
+                withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
+                    sh '''
+                    export SONAR_TOKEN=${SONAR_TOKEN}
+                    mvn sonar:sonar -Dsonar.token=$SONAR_TOKEN
+                    '''
             }
         }
     }
 }
+
+        stage('SAST with Bandit') {
+            steps {
+                script {
+                // Remove any existing Bandit report file
+                sh 'rm -f bandit_report.html'
+                // Ensure Bandit is installed in the Jenkins environment
+                sh 'pip install bandit'
+                
+                // Run Bandit on the code directory
+                sh 'bandit -r /var/lib/jenkins/workspace/vul-django -o bandit_report.html -f html'
+                
+                // Display the Bandit report
+                sh 'cat bandit_report.html'
+                // Archive the Bandit report as an artifact
+                archiveArtifacts artifacts: 'bandit_report.html', allowEmptyArchive: true
+        }
+    }
+}
+
 
 
         
@@ -102,13 +122,11 @@ pipeline {
         }
 
         
-
-        
          stage('Push Docker Image') {
             steps {
                 script {
                     docker.withRegistry("${REGISTRY}", DOCKER_CREDENTIALS_ID) {
-                        dockerImage.push('v5')
+                        dockerImage.push('v1')
                     }
                 }
             }
@@ -117,7 +135,7 @@ pipeline {
         steps {
         sshagent(['tomcatkey']) {
         sh '''
-        ssh -o StrictHostKeyChecking=no abuabdillah5444@34.173.148.142 "sudo docker pull aatikah/vul-djangoapp:v5 && sudo docker run -d -p 8000:8000 aatikah/vul-djangoapp:v1"
+        ssh -o StrictHostKeyChecking=no abuabdillah5444@34.173.148.142 "sudo docker pull aatikah/vul-djangoapp:v1 && sudo docker run -d -p 8000:8000 aatikah/vul-djangoapp:v1"
         '''
     }
     }
