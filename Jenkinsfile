@@ -81,7 +81,7 @@ pipeline {
                   sh 'cat target/sonar/report-task.txt'
             }
         }
-        
+        }
         stage('Build Docker Image') {
 
             steps {
