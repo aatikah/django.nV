@@ -131,6 +131,15 @@ pipeline {
                     
                 // Archive the Bandit report as an artifact
                 archiveArtifacts artifacts: 'bandit_report.html', allowEmptyArchive: true
+
+            // Publish the report using HTML Publisher Plugin
+            publishHTML(target: [
+                reportDir: '',
+                reportFiles: 'bandit_report.html',
+                reportName: 'Bandit Security Report',
+                keepAll: true,
+                alwaysLinkToLastBuild: true
+            ])
         }
                 echo "Report available at: http://34.28.86.41/bandit_reports/bandit_report.html"
     }
