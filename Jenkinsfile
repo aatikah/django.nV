@@ -118,7 +118,10 @@ pipeline {
                // sh 'pip install bandit'
                 
                 // Run Bandit on the code directory
-                sh 'bandit -r /var/lib/jenkins/workspace/vul-django -o bandit_report.html -f html'
+                    sh '''
+                    /home/abuabdillah5444/myenv/bin/bandit -r /var/lib/jenkins/workspace/vul-django -o bandit_report.html -f html
+                    '''
+                //sh 'bandit -r /var/lib/jenkins/workspace/vul-django -o bandit_report.html -f html'
                 
                 // Display the Bandit report
                 sh 'cat bandit_report.html'
