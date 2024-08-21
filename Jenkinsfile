@@ -8,7 +8,7 @@ pipeline {
         REPOSITORY = 'aatikah'
         IMAGE_NAME = 'vul-djangoapp'
         DOCKER_CREDENTIALS_ID = 'docker-credential'
-        SONORQUBE_CREDS = credentials('sonar-token')
+    
     }
     
     stages {
@@ -75,15 +75,7 @@ pipeline {
             }
         }
 
-        stage('SAST') {
-    steps {
-        withSonarQubeEnv('vul-django') {
-            withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
-                sh "mvn sonar:sonar -Dsonar.login=${SONAR_TOKEN}"
-            }
-        }
-    }
-}
+    
 
        stage('SAST') {
     steps {
