@@ -124,10 +124,15 @@ pipeline {
                 //sh 'bandit -r /var/lib/jenkins/workspace/vul-django -o bandit_report.html -f html'
                 
                 // Display the Bandit report
-                sh 'cat bandit_report.html'
+                    sh 'cat bandit_report.html'
+
+                // Assuming /var/www/html/bandit_reports is served by your web server
+                    sh 'cp bandit_report.html /var/www/html/bandit_reports/'
+                    
                 // Archive the Bandit report as an artifact
                 archiveArtifacts artifacts: 'bandit_report.html', allowEmptyArchive: true
         }
+                echo "Report available at: http://34.28.86.41/bandit_reports/bandit_report.html"
     }
 }
 
