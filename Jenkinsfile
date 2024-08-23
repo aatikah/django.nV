@@ -157,7 +157,7 @@ pipeline {
                     )
 
                     def banditJsonStatus = sh(
-                        script: '/home/abuabdillah5444/myenv/bin/bandit -r /var/lib/jenkins/workspace/vul-django -o bandit_report.json -f html',
+                        script: '/home/abuabdillah5444/myenv/bin/bandit -r /var/lib/jenkins/workspace/vul-django -o bandit_report.json -f json',
                         returnStatus: true
                     )
         
@@ -220,7 +220,7 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry("${REGISTRY}", DOCKER_CREDENTIALS_ID) {
-                        dockerImage.push('v3')
+                        dockerImage.push('v4')
                     }
                 }
             }
@@ -229,7 +229,7 @@ pipeline {
         steps {
         sshagent(['tomcatkey']) {
         sh '''
-        ssh -o StrictHostKeyChecking=no abuabdillah5444@34.31.246.184 "sudo docker pull aatikah/vul-djangoapp:v3 && sudo docker run -d -p 8002:8000 aatikah/vul-djangoapp:v1"
+        ssh -o StrictHostKeyChecking=no abuabdillah5444@34.31.246.184 "sudo docker pull aatikah/vul-djangoapp:v4 && sudo docker run -d -p 8003:8000 aatikah/vul-djangoapp:v1"
         '''
     }
     }
