@@ -8,6 +8,9 @@ pipeline {
         REPOSITORY = 'aatikah'
         IMAGE_NAME = 'vul-djangoapp'
         DOCKER_CREDENTIALS_ID = 'docker-credential'
+        DEFECTDOJO_API_KEY = credentials('DEFECTDOJO_API_KEY')
+        DEFECTDOJO_URL = credentials('DEFECTDOJO_URL')
+        ENGAGEMENT_ID = '2'
     
     }
     
@@ -174,6 +177,21 @@ pipeline {
                     alwaysLinkToLastBuild: true
                 ])
 
+                    def response = sh(
+                        script: """
+                        curl -X POST "${DEFECTDOJO_URL}/api/v2/import-scan/" \
+                        -H "Authorization: Token ${DEFECTDOJO_API_KEY}" \
+                        -H "accept: application/json" \
+                        -H "Content-Type: multipart/form-data" \
+                        -F "file=@bandit_report.json" \
+                        -F 'scan_type=Bandit Scan' \
+                        -F 'engagement=${ENGAGEMENT_ID}'
+                        """,
+                        returnStdout: true
+                    ).trim()
+
+                    echo "Response from DefectDojo: ${response}"
+
                     
                 }
             }
@@ -204,7 +222,7 @@ pipeline {
         steps {
         sshagent(['tomcatkey']) {
         sh '''
-        ssh -o StrictHostKeyChecking=no abuabdillah5444@34.173.148.142 "sudo docker pull aatikah/vul-djangoapp:v1 && sudo docker run -d -p 8000:8000 aatikah/vul-djangoapp:v1"
+        ssh -o StrictHostKeyChecking=no abuabdillah5444@34.31.246.184 "sudo docker pull aatikah/vul-djangoapp:v1 && sudo docker run -d -p 8000:8000 aatikah/vul-djangoapp:v1"
         '''
     }
     }
