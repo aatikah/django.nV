@@ -155,6 +155,11 @@ pipeline {
                         script: '/home/abuabdillah5444/myenv/bin/bandit -r /var/lib/jenkins/workspace/vul-django -o bandit_report.html -f html',
                         returnStatus: true
                     )
+
+                    def banditStatus = sh(
+                        script: '/home/abuabdillah5444/myenv/bin/bandit -r /var/lib/jenkins/workspace/vul-django -o bandit_report.json -f html',
+                        returnStatus: true
+                    )
         
                     if (banditStatus != 0) {
                         echo "Bandit found issues in the code. Please review the report at bandit_report.html."
@@ -179,7 +184,7 @@ pipeline {
 
                     def response = sh(
                         script: """
-                        curl -X POST "${DEFECTDOJO_URL}/api/v2/import-scan/" \
+                        curl -X POST ${DEFECTDOJO_URL}/api/v2/import-scan/ \
                         -H "Authorization: Token ${DEFECTDOJO_API_KEY}" \
                         -H "accept: application/json" \
                         -H "Content-Type: multipart/form-data" \
