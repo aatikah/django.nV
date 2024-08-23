@@ -185,7 +185,7 @@ pipeline {
 
                     def response = sh(
                         script: """
-                        curl -X POST ${DEFECTDOJO_URL}/api/v2/import-scan/ \
+                        curl -X POST http://35.222.107.111:8080/api/v2/import-scan/ \
                         -H "Authorization: Token ${DEFECTDOJO_API_KEY}" \
                         -H "accept: application/json" \
                         -H "Content-Type: multipart/form-data" \
@@ -220,7 +220,7 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry("${REGISTRY}", DOCKER_CREDENTIALS_ID) {
-                        dockerImage.push('v4')
+                        dockerImage.push('v5')
                     }
                 }
             }
@@ -229,7 +229,7 @@ pipeline {
         steps {
         sshagent(['tomcatkey']) {
         sh '''
-        ssh -o StrictHostKeyChecking=no abuabdillah5444@34.31.246.184 "sudo docker pull aatikah/vul-djangoapp:v4 && sudo docker run -d -p 8003:8000 aatikah/vul-djangoapp:v1"
+        ssh -o StrictHostKeyChecking=no abuabdillah5444@34.31.246.184 "sudo docker pull aatikah/vul-djangoapp:v5 && sudo docker run -d -p 8004:8000 aatikah/vul-djangoapp:v1"
         '''
     }
     }
