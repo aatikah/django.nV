@@ -168,7 +168,8 @@ pipeline {
                     }
                     
                     // Display the Bandit report
-                    sh 'cat bandit_report.html'
+                        sh 'cat bandit_report.html'
+                        sh 'cat bandit_report.json'
 
                      // Archive the Bandit report as an artifact
                     archiveArtifacts artifacts: 'bandit_report.html', allowEmptyArchive: true
@@ -219,7 +220,7 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry("${REGISTRY}", DOCKER_CREDENTIALS_ID) {
-                        dockerImage.push('v2')
+                        dockerImage.push('v3')
                     }
                 }
             }
@@ -228,7 +229,7 @@ pipeline {
         steps {
         sshagent(['tomcatkey']) {
         sh '''
-        ssh -o StrictHostKeyChecking=no abuabdillah5444@34.31.246.184 "sudo docker pull aatikah/vul-djangoapp:v2 && sudo docker run -d -p 8001:8000 aatikah/vul-djangoapp:v1"
+        ssh -o StrictHostKeyChecking=no abuabdillah5444@34.31.246.184 "sudo docker pull aatikah/vul-djangoapp:v3 && sudo docker run -d -p 8002:8000 aatikah/vul-djangoapp:v1"
         '''
     }
     }
