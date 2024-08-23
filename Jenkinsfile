@@ -151,17 +151,17 @@ pipeline {
         stage('SAST with Bandit') {
             steps {
                 script {
-                    def banditStatus = sh(
+                    def banditHtmlStatus = sh(
                         script: '/home/abuabdillah5444/myenv/bin/bandit -r /var/lib/jenkins/workspace/vul-django -o bandit_report.html -f html',
                         returnStatus: true
                     )
 
-                    def banditStatus = sh(
+                    def banditJsonStatus = sh(
                         script: '/home/abuabdillah5444/myenv/bin/bandit -r /var/lib/jenkins/workspace/vul-django -o bandit_report.json -f html',
                         returnStatus: true
                     )
         
-                    if (banditStatus != 0) {
+                    if (banditHtmlStatus != 0) {
                         echo "Bandit found issues in the code. Please review the report at bandit_report.html."
                         // Optionally, you can fail the build if you want to treat these issues as critical
                         // error("Bandit scan failed with exit code ${banditStatus}")
