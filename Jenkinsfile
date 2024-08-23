@@ -190,7 +190,8 @@ pipeline {
                         -H "Content-Type: multipart/form-data" \
                         -F "file=@bandit_report.json" \
                         -F 'scan_type=Bandit Scan' \
-                        -F 'engagement=${ENGAGEMENT_ID}'
+                        -F 'engagement=${ENGAGEMENT_ID}' \
+                        -F 'product_name=vul-django-test'
                         """,
                         returnStdout: true
                     ).trim()
