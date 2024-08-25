@@ -44,6 +44,23 @@ pipeline {
                 if (gitleaksStatus == 1) {
                     echo 'Leaks found. Review the Gitleaks report for details.'
                     }
+
+
+                def response = sh(
+                        script: """
+                        curl -X POST http://34.30.95.108:8080/api/v2/import-scan/ \
+                        -H "Authorization: Token ${DEFECTDOJO_API_KEY}" \
+                        -H "accept: application/json" \
+                        -H "Content-Type: multipart/form-data" \
+                        -F "file=@gitleaks_report.json" \
+                        -F 'scan_type=Gitleaks Scan' \
+                        -F 'engagement=${ENGAGEMENT_ID}' \
+                        -F 'product_name=django-pipeline'
+                        """,
+                        returnStdout: true
+                    ).trim()
+
+                    echo "Response from DefectDojo: ${response}"
                    
                 }
            }
@@ -70,11 +87,30 @@ pipeline {
 
         stage('Source Composition Analysis'){
             steps{
-                sh 'rm owasp* || true'
-                sh 'wget "https://raw.githubusercontent.com/aatikah/django.nV/master/owasp-dependency-check.sh"'
-                sh 'chmod +x owasp-dependency-check.sh'
-                sh 'bash owasp-dependency-check.sh'
-                sh 'cat /var/lib/jenkins/workspace/vul-django/odc-reports/dependency-check-report.xml'
+                script{
+                    sh 'rm owasp* || true'
+                    sh 'wget "https://raw.githubusercontent.com/aatikah/django.nV/master/owasp-dependency-check.sh"'
+                    sh 'chmod +x owasp-dependency-check.sh'
+                    sh 'bash owasp-dependency-check.sh'
+                    sh 'cat /var/lib/jenkins/workspace/vul-django/odc-reports/dependency-check-report.xml'
+                    sh 'cat /var/lib/jenkins/workspace/vul-django/odc-reports/dependency-check-report.json'
+
+                    def response = sh(
+                        script: """
+                        curl -X POST http://34.30.95.108:8080/api/v2/import-scan/ \
+                        -H "Authorization: Token ${DEFECTDOJO_API_KEY}" \
+                        -H "accept: application/json" \
+                        -H "Content-Type: multipart/form-data" \
+                        -F "file=@dependency-check-report.json" \
+                        -F 'scan_type=Dependency Check Scan' \
+                        -F 'engagement=${ENGAGEMENT_ID}' \
+                        -F 'product_name=django-pipeline'
+                        """,
+                        returnStdout: true
+                    ).trim()
+
+                    echo "Response from DefectDojo: ${response}"
+                }
             }
         }
 
@@ -192,7 +228,7 @@ pipeline {
                         -F "file=@bandit_report.json" \
                         -F 'scan_type=Bandit Scan' \
                         -F 'engagement=${ENGAGEMENT_ID}' \
-                        -F 'product_name=vul-django-test'
+                        -F 'product_name=django-pipeline'
                         """,
                         returnStdout: true
                     ).trim()
@@ -220,7 +256,7 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry("${REGISTRY}", DOCKER_CREDENTIALS_ID) {
-                        dockerImage.push('v1')
+                        dockerImage.push('v2')
                     }
                 }
             }
@@ -229,7 +265,7 @@ pipeline {
         steps {
         sshagent(['tomcatkey']) {
         sh '''
-        ssh -o StrictHostKeyChecking=no abuabdillah5444@34.173.211.120 "sudo docker pull aatikah/vul-djangoapp:v1 && sudo docker run -d -p 8000:8000 aatikah/vul-djangoapp:v1"
+        ssh -o StrictHostKeyChecking=no abuabdillah5444@34.173.211.120 "sudo docker pull aatikah/vul-djangoapp:v2 && sudo docker run -d -p 8001:8000 aatikah/vul-djangoapp:v1"
         '''
     }
     }
