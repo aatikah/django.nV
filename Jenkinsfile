@@ -101,7 +101,7 @@ pipeline {
                         -H "Authorization: Token ${DEFECTDOJO_API_KEY}" \
                         -H "accept: application/json" \
                         -H "Content-Type: multipart/form-data" \
-                        -F "file=@dependency-check-report.json" \
+                        -F "file=@/var/lib/jenkins/workspace/vul-django/odc-reports/dependency-check-report.json" \
                         -F 'scan_type=Dependency Check Scan' \
                         -F 'engagement=${ENGAGEMENT_ID}' \
                         -F 'product_name=django-pipeline'
