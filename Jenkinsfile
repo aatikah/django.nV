@@ -86,34 +86,34 @@ pipeline {
            // }
         //}
 
-       / stage('Source Composition Analysis'){
-           / steps{
-               / script{
-                  /  sh 'rm owasp* || true'
-                  /  sh 'wget "https://raw.githubusercontent.com/aatikah/django.nV/master/owasp-dependency-check.sh"'
-                 /   sh 'chmod +x owasp-dependency-check.sh'
-                 /   sh 'bash owasp-dependency-check.sh'
-                 /   sh 'cat /var/lib/jenkins/workspace/vul-django/odc-reports/dependency-check-report.xml'
-                   / sh 'cat /var/lib/jenkins/workspace/vul-django/odc-reports/dependency-check-report.json'
+       // stage('Source Composition Analysis'){
+           // steps{
+               // script{
+                  //  sh 'rm owasp* || true'
+                  //  sh 'wget "https://raw.githubusercontent.com/aatikah/django.nV/master/owasp-dependency-check.sh"'
+                 //   sh 'chmod +x owasp-dependency-check.sh'
+                 //   sh 'bash owasp-dependency-check.sh'
+                 //   sh 'cat /var/lib/jenkins/workspace/vul-django/odc-reports/dependency-check-report.xml'
+                   // sh 'cat /var/lib/jenkins/workspace/vul-django/odc-reports/dependency-check-report.json'
 
-                    /def response = sh(
-                      /  script: """
-                      /  curl -X POST ${DEFECT_DOJO}/api/v2/import-scan/ \
-                      /  -H "Authorization: Token ${DEFECTDOJO_API_KEY}" \
-                      /  -H "accept: application/json" \
-                       / -H "Content-Type: multipart/form-data" \
-                       / -F "file=@/var/lib/jenkins/workspace/vul-django/odc-reports/dependency-check-report.json" \
-                      /  -F 'scan_type=Dependency Check Scan' \
-                      /  -F 'engagement=${ENGAGEMENT_ID}' \
-                      /  -F 'product_name=django-pipeline'
-                      /  """,
-                    /    returnStdout: true
-                  /  ).trim()
+                    //def response = sh(
+                      //  script: """
+                      //  curl -X POST ${DEFECT_DOJO}/api/v2/import-scan/ \
+                      //  -H "Authorization: Token ${DEFECTDOJO_API_KEY}" \
+                      //  -H "accept: application/json" \
+                       // -H "Content-Type: multipart/form-data" \
+                       // -F "file=@/var/lib/jenkins/workspace/vul-django/odc-reports/dependency-check-report.json" \
+                      //  -F 'scan_type=Dependency Check Scan' \
+                      //  -F 'engagement=${ENGAGEMENT_ID}' \
+                      //  -F 'product_name=django-pipeline'
+                      //  """,
+                    //    returnStdout: true
+                  //  ).trim()
 
-                  /  echo "Response from DefectDojo: ${response}"
-              /  }
-          /  }
-       / }
+                  //  echo "Response from DefectDojo: ${response}"
+              //  }
+          //  }
+       // }
 
     
 
