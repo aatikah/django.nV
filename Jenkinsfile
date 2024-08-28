@@ -130,23 +130,23 @@ pipeline {
    // }
 //}
 
-        stage('SAST With Sonarqube') {
-            steps {
-                checkout([
-                    $class: 'GitSCM',
-                    branches: [[name: '*/master']],
-                    userRemoteConfigs: [[url: 'https://github.com/aatikah/django.nV.git']]
-                ])
-                withSonarQubeEnv('vul-django') {
-                    withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
-                        sh '''
-                            export SONAR_TOKEN=${SONAR_TOKEN}
-                            mvn sonar:sonar -Dsonar.token=$SONAR_TOKEN
-                        '''
-            }
-        }
-    }
-}
+        //stage('SAST With Sonarqube') {
+           // steps {
+               // checkout([
+                //    $class: 'GitSCM',
+               //     branches: [[name: '*/master']],
+               //     userRemoteConfigs: [[url: 'https://github.com/aatikah/django.nV.git']]
+              //  ])
+               // withSonarQubeEnv('vul-django') {
+                   // withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
+                       // sh '''
+                         //   export SONAR_TOKEN=${SONAR_TOKEN}
+                        //    mvn sonar:sonar -Dsonar.token=$SONAR_TOKEN
+                   //     '''
+           // }
+      //  }
+  //  }
+//}
 
        //stage('SAST with Bandit') {
            // steps {
@@ -282,11 +282,26 @@ pipeline {
 
                     // Run the ZAP baseline scan and generate a JSON report
                     sh '''
-                    docker exec zap zap-baseline.py -t http://your-target-website.com -J zap_report.json
+                    docker exec zap zap-baseline.py -t http://34.31.49.224 -J zap_report.json
+                    '''
+
+                    // Run the ZAP baseline scan and generate a HTML report
+                    sh '''
+                    docker exec zap zap-baseline.py -t http://34.31.49.224 -J zap_report.html
                     '''
 
                     // Copy the ZAP JSON report out of the Docker container
                     sh 'docker cp zap:/zap/zap_report.json ./zap_report.json'
+
+                    // Copy the ZAP HTML report out of the Docker container
+                    sh 'docker cp zap:/zap/zap_report.html ./zap_report.html'
+
+                    // Use the Jenkins HTML Publisher Plugin to display the report
+                        publishHTML(target: [
+                            reportDir: '.',
+                            reportFiles: 'zap_report.html',
+                            reportName: 'OWASP ZAP Report'
+                        ])
 
                     def response = sh(
                         script: """
