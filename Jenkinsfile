@@ -276,7 +276,7 @@ pipeline {
                 script {
                     // Run ZAP in Docker if not running already
                    // sh 'sudo docker run -d --name zap -u zap -p 8090:8080 zaproxy/zap-stable zap.sh -daemon -config api.disablekey=true -config api.addrs.addr.name=0.0.0.0 -config api.addrs.addr.port=8080'
-                    sh 'sudo docker run -d --name zap -u zap -p 8090:8080 -v ~/zap_reports:/zap/wrk zaproxy/zap-stable zap.sh zap.sh -daemon -config api.disablekey=true -config api.addrs.addr.name=0.0.0.0 -config api.addrs.addr.port=8080'
+                    sh 'sudo docker run -d --name zap -p 8090:8080 -v ~/zap_reports:/zap/wrk zaproxy/zap-stable zap.sh zap.sh -daemon -config api.disablekey=true -config api.addrs.addr.name=0.0.0.0 -config api.addrs.addr.port=8080'
 
 
                     // Allow ZAP to start up
