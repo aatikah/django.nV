@@ -266,7 +266,7 @@ pipeline {
             steps {
                 sshagent(['tomcatkey']) {
                 sh '''
-                ssh -o StrictHostKeyChecking=no abuabdillah5444@34.31.49.224 "sudo docker pull aatikah/vul-djangoapp:v2 && sudo docker run -d -p 8001:8000 aatikah/vul-djangoapp:v2"
+                ssh -o StrictHostKeyChecking=no abuabdillah5444@34.31.49.224 "sudo docker pull aatikah/vul-djangoapp:v2 && sudo docker run -d -p 8002:8000 aatikah/vul-djangoapp:v2"
                 '''
     }
     }
@@ -275,7 +275,7 @@ pipeline {
             steps {
                 script {
                     // Run ZAP in Docker if not running already
-                    sh 'sudo docker run -d --name zap -u zap -p 8090:8080 owasp/zap2docker-stable zap.sh -daemon -config api.disablekey=true -config api.addrs.addr.name=0.0.0.0 -config api.addrs.addr.port=8080'
+                    sh 'sudo docker run -d --name zap -u zap -p 8090:8080 zaproxy/zap-stable zap.sh -daemon -config api.disablekey=true -config api.addrs.addr.name=0.0.0.0 -config api.addrs.addr.port=8080'
 
                     // Allow ZAP to start up
                     sleep 30
