@@ -11,6 +11,7 @@ pipeline {
         DEFECTDOJO_API_KEY = credentials('DEFECTDOJO_API_KEY')
         DEFECTDOJO_URL = credentials('DEFECTDOJO_URL')
         ENGAGEMENT_ID = '4'
+        DEFECT_DOJO = 'http://35.222.95.240:8080'
     
     }
     
@@ -48,7 +49,7 @@ pipeline {
 
                 def response = sh(
                         script: """
-                        curl -X POST http://34.30.95.108:8080/api/v2/import-scan/ \
+                        curl -X POST ${DEFECT_DOJO}/api/v2/import-scan/ \
                         -H "Authorization: Token ${DEFECTDOJO_API_KEY}" \
                         -H "accept: application/json" \
                         -H "Content-Type: multipart/form-data" \
@@ -97,7 +98,7 @@ pipeline {
 
                     /def response = sh(
                       /  script: """
-                      /  curl -X POST http://34.30.95.108:8080/api/v2/import-scan/ \
+                      /  curl -X POST ${DEFECT_DOJO}/api/v2/import-scan/ \
                       /  -H "Authorization: Token ${DEFECTDOJO_API_KEY}" \
                       /  -H "accept: application/json" \
                        / -H "Content-Type: multipart/form-data" \
@@ -221,7 +222,7 @@ pipeline {
 
                     def response = sh(
                         script: """
-                        curl -X POST http://34.30.95.108:8080/api/v2/import-scan/ \
+                        curl -X POST ${DEFECT_DOJO}/api/v2/import-scan/ \
                         -H "Authorization: Token ${DEFECTDOJO_API_KEY}" \
                         -H "accept: application/json" \
                         -H "Content-Type: multipart/form-data" \
@@ -256,7 +257,7 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry("${REGISTRY}", DOCKER_CREDENTIALS_ID) {
-                        dockerImage.push('v2')
+                        dockerImage.push('v1')
                     }
                 }
             }
@@ -265,11 +266,47 @@ pipeline {
         steps {
         sshagent(['tomcatkey']) {
         sh '''
-        ssh -o StrictHostKeyChecking=no abuabdillah5444@34.173.211.120 "sudo docker pull aatikah/vul-djangoapp:v2 && sudo docker run -d -p 8001:8000 aatikah/vul-djangoapp:v1"
+        ssh -o StrictHostKeyChecking=no abuabdillah5444@34.31.49.224 "sudo docker pull aatikah/vul-djangoapp:v1 && sudo docker run -d -p 8000:8000 aatikah/vul-djangoapp:v1"
         '''
     }
     }
 }
+
+ stage('DAST With OWASP ZAP Scan') {
+            steps {
+                script {
+                    // Run ZAP in Docker if not running already
+                    sh 'docker run -d --name zap -u zap -p 8090:8080 owasp/zap2docker-stable zap.sh -daemon -config api.disablekey=true -config api.addrs.addr.name=0.0.0.0 -config api.addrs.addr.port=8080'
+
+                    // Allow ZAP to start up
+                    sleep 30
+
+                    // Run the ZAP baseline scan and generate a JSON report
+                    sh '''
+                    docker exec zap zap-baseline.py -t http://your-target-website.com -J zap_report.json
+                    '''
+
+                    // Copy the ZAP JSON report out of the Docker container
+                    sh 'docker cp zap:/zap/zap_report.json ./zap_report.json'
+
+                    def response = sh(
+                        script: """
+                        curl -X POST ${DEFECT_DOJO}/api/v2/import-scan/ \
+                        -H "Authorization: Token ${DEFECTDOJO_API_KEY}" \
+                        -H "accept: application/json" \
+                        -H "Content-Type: multipart/form-data" \
+                        -F "file=@zap_report.json" \
+                        -F 'scan_type=ZAP Scan' \
+                        -F 'engagement=${ENGAGEMENT_ID}' \
+                        -F 'product_name=django-pipeline'
+                        """,
+                        returnStdout: true
+                    ).trim()
+
+                    echo "Response from DefectDojo: ${response}"
+                
+            }
+        }
         
         
     }
