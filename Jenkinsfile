@@ -257,7 +257,7 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry("${REGISTRY}", DOCKER_CREDENTIALS_ID) {
-                        dockerImage.push('v1')
+                        dockerImage.push('v2')
                     }
                 }
             }
@@ -266,7 +266,7 @@ pipeline {
             steps {
                 sshagent(['tomcatkey']) {
                 sh '''
-                ssh -o StrictHostKeyChecking=no abuabdillah5444@34.31.49.224 "sudo docker pull aatikah/vul-djangoapp:v1 && sudo docker run -d -p 8000:8000 aatikah/vul-djangoapp:v1"
+                ssh -o StrictHostKeyChecking=no abuabdillah5444@34.31.49.224 "sudo docker pull aatikah/vul-djangoapp:v2 && sudo docker run -d -p 8001:8000 aatikah/vul-djangoapp:v2"
                 '''
     }
     }
@@ -275,26 +275,26 @@ pipeline {
             steps {
                 script {
                     // Run ZAP in Docker if not running already
-                    sh 'docker run -d --name zap -u zap -p 8090:8080 owasp/zap2docker-stable zap.sh -daemon -config api.disablekey=true -config api.addrs.addr.name=0.0.0.0 -config api.addrs.addr.port=8080'
+                    sh 'sudo docker run -d --name zap -u zap -p 8090:8080 owasp/zap2docker-stable zap.sh -daemon -config api.disablekey=true -config api.addrs.addr.name=0.0.0.0 -config api.addrs.addr.port=8080'
 
                     // Allow ZAP to start up
                     sleep 30
 
                     // Run the ZAP baseline scan and generate a JSON report
                     sh '''
-                    docker exec zap zap-baseline.py -t http://34.31.49.224 -J zap_report.json
+                        sudo docker exec zap zap-baseline.py -t http://34.31.49.224 -J zap_report.json
                     '''
 
                     // Run the ZAP baseline scan and generate a HTML report
                     sh '''
-                    docker exec zap zap-baseline.py -t http://34.31.49.224 -J zap_report.html
+                        sudo docker exec zap zap-baseline.py -t http://34.31.49.224 -J zap_report.html
                     '''
 
                     // Copy the ZAP JSON report out of the Docker container
-                    sh 'docker cp zap:/zap/zap_report.json ./zap_report.json'
+                    sh 'sudo docker cp zap:/zap/zap_report.json ./zap_report.json'
 
                     // Copy the ZAP HTML report out of the Docker container
-                    sh 'docker cp zap:/zap/zap_report.html ./zap_report.html'
+                    sh 'sudo docker cp zap:/zap/zap_report.html ./zap_report.html'
 
                     // Use the Jenkins HTML Publisher Plugin to display the report
                         publishHTML(target: [
