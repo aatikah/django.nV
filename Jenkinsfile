@@ -263,16 +263,15 @@ pipeline {
             }
         }
         stage('Deploy to GCP VM') {
-        steps {
-        sshagent(['tomcatkey']) {
-        sh '''
-        ssh -o StrictHostKeyChecking=no abuabdillah5444@34.31.49.224 "sudo docker pull aatikah/vul-djangoapp:v1 && sudo docker run -d -p 8000:8000 aatikah/vul-djangoapp:v1"
-        '''
+            steps {
+                sshagent(['tomcatkey']) {
+                sh '''
+                ssh -o StrictHostKeyChecking=no abuabdillah5444@34.31.49.224 "sudo docker pull aatikah/vul-djangoapp:v1 && sudo docker run -d -p 8000:8000 aatikah/vul-djangoapp:v1"
+                '''
     }
     }
 }
-
- stage('DAST With OWASP ZAP Scan') {
+    stage('DAST With OWASP ZAP Scan') {
             steps {
                 script {
                     // Run ZAP in Docker if not running already
@@ -310,11 +309,7 @@ pipeline {
         
         
     }
-    //post {
-       // always {
-            // Clean up after the build
-           // deleteDir()
-       // }
-        
-    //}
+    }
 }
+         
+
