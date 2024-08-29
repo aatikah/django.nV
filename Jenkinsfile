@@ -11,7 +11,7 @@ pipeline {
         DEFECTDOJO_API_KEY = credentials('DEFECTDOJO_API_KEY')
         DEFECTDOJO_URL = credentials('DEFECTDOJO_URL')
         ENGAGEMENT_ID = '4'
-        DEFECT_DOJO = 'http://35.222.95.240:8080'
+        DEFECT_DOJO = 'http://34.133.12.98:8080'
     
     }
     
@@ -257,7 +257,7 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry("${REGISTRY}", DOCKER_CREDENTIALS_ID) {
-                        dockerImage.push('v2')
+                        dockerImage.push('v1')
                     }
                 }
             }
@@ -266,7 +266,7 @@ pipeline {
             steps {
                 sshagent(['tomcatkey']) {
                 sh '''
-                ssh -o StrictHostKeyChecking=no abuabdillah5444@34.31.49.224 "sudo docker pull aatikah/vul-djangoapp:v2 && sudo docker run -d -p 8009:8000 aatikah/vul-djangoapp:v2"
+                ssh -o StrictHostKeyChecking=no abuabdillah5444@34.135.208.39 "sudo docker pull aatikah/vul-djangoapp:v1 && sudo docker run -d -p 8000:8000 aatikah/vul-djangoapp:v1"
                 '''
     }
     }
@@ -276,27 +276,31 @@ pipeline {
                 script {
                     // Run ZAP in Docker if not running already
                    // sh 'sudo docker run -d --name zap -u zap -p 8090:8080 zaproxy/zap-stable zap.sh -daemon -config api.disablekey=true -config api.addrs.addr.name=0.0.0.0 -config api.addrs.addr.port=8080'
-                    sh 'sudo docker run -d --name zap -p 8090:8080 -v ~/zap_reports:/zap/wrk zaproxy/zap-stable zap.sh zap.sh -daemon -config api.disablekey=true -config api.addrs.addr.name=0.0.0.0 -config api.addrs.addr.port=8080'
-
+                   // sh 'sudo docker run -d --name zap -p 8090:8080 -v ~/zap_reports:/zap/wrk zaproxy/zap-stable zap.sh zap.sh -daemon -config api.disablekey=true -config api.addrs.addr.name=0.0.0.0 -config api.addrs.addr.port=8080'
+                    
 
                     // Allow ZAP to start up
                     sleep 30
 
                     // Run the ZAP baseline scan and generate a JSON report
-                    sh '''
-                        sudo docker exec zap zap-baseline.py -t http://34.31.49.224 -J zap_report.json
-                    '''
-
+                    //sh '''
+                       // sudo docker exec zap zap-baseline.py -t http://34.135.208.39 -J zap_report.json
+                    //'''
+                    
+                    sh 'sudo docker run -t zaproxy/zap-stable zap-baseline.py -t http://34.135.208.39' -J zap_report.json
+                    
                     // Run the ZAP baseline scan and generate a HTML report
-                    sh '''
-                        sudo docker exec zap zap-baseline.py -t http://34.31.49.224 -J zap_report.html
-                    '''
+                   // sh '''
+                       // sudo docker exec zap zap-baseline.py -t http://34.135.208.39 -J zap_report.html
+                   // '''
+
+                    sh 'sudo docker run -t zaproxy/zap-stable zap-baseline.py -t http://34.135.208.39' -J zap_report.html
 
                     // Copy the ZAP JSON report out of the Docker container
-                    sh 'sudo docker cp zap:/zap/zap_report.json ./zap_report.json'
+                   // sh 'sudo docker cp zap:/zap/zap_report.json ./zap_report.json'
 
                     // Copy the ZAP HTML report out of the Docker container
-                    sh 'sudo docker cp zap:/zap/zap_report.html ./zap_report.html'
+                   // sh 'sudo docker cp zap:/zap/zap_report.html ./zap_report.html'
 
                     // Use the Jenkins HTML Publisher Plugin to display the report
                         publishHTML(target: [
