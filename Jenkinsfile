@@ -8,7 +8,7 @@ pipeline {
         REPOSITORY = 'aatikah'
         IMAGE_NAME = 'vul-djangoapp'
         DOCKER_CREDENTIALS_ID = 'docker-credential'
-        DEFECTDOJO_API_KEY = credentials('DEFECTDOJO_API_KEY')
+        DEFECTDOJO_API_KEY = 'DEFECTDOJO_API_KEY'
         DEFECTDOJO_URL = credentials('DEFECTDOJO_URL')
         GITLEAKS_ENGAGEMENT_ID = '5'
         BANDIT_ENGAGEMENT_ID = '6'
@@ -268,7 +268,7 @@ pipeline {
             steps {
                 sshagent(['tomcatkey']) {
                 sh '''
-                ssh -o StrictHostKeyChecking=no abuabdillah5444@34.135.208.39 "sudo docker pull aatikah/vul-djangoapp:v1 && sudo docker run -d -p 8001:8000 aatikah/vul-djangoapp:v1"
+                ssh -o StrictHostKeyChecking=no abuabdillah5444@34.135.208.39 "sudo docker pull aatikah/vul-djangoapp:v1 && sudo docker run -d -p 8002:8000 aatikah/vul-djangoapp:v1"
                 '''
     }
     }
