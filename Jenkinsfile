@@ -10,7 +10,9 @@ pipeline {
         DOCKER_CREDENTIALS_ID = 'docker-credential'
         DEFECTDOJO_API_KEY = credentials('DEFECTDOJO_API_KEY')
         DEFECTDOJO_URL = credentials('DEFECTDOJO_URL')
-        ENGAGEMENT_ID = '4'
+        GITLEAKS_ENGAGEMENT_ID = '5'
+        BANDIT_ENGAGEMENT_ID = '6'
+        ZAP_ENGAGEMENT_ID = '7'
         DEFECT_DOJO = 'http://34.133.12.98:8080'
     
     }
@@ -55,7 +57,7 @@ pipeline {
                         -H "Content-Type: multipart/form-data" \
                         -F "file=@gitleaks_report.json" \
                         -F 'scan_type=Gitleaks Scan' \
-                        -F 'engagement=${ENGAGEMENT_ID}' \
+                        -F 'engagement=${GITLEAKS_ENGAGEMENT_ID}' \
                         -F 'product_name=django-pipeline'
                         """,
                         returnStdout: true
@@ -228,7 +230,7 @@ pipeline {
                         -H "Content-Type: multipart/form-data" \
                         -F "file=@bandit_report.json" \
                         -F 'scan_type=Bandit Scan' \
-                        -F 'engagement=${ENGAGEMENT_ID}' \
+                        -F 'engagement=${BANDIT_ENGAGEMENT_ID}' \
                         -F 'product_name=django-pipeline'
                         """,
                         returnStdout: true
@@ -266,7 +268,7 @@ pipeline {
             steps {
                 sshagent(['tomcatkey']) {
                 sh '''
-                ssh -o StrictHostKeyChecking=no abuabdillah5444@34.135.208.39 "sudo docker pull aatikah/vul-djangoapp:v1 && sudo docker run -d -p 8006:8000 aatikah/vul-djangoapp:v1"
+                ssh -o StrictHostKeyChecking=no abuabdillah5444@34.135.208.39 "sudo docker pull aatikah/vul-djangoapp:v1 && sudo docker run -d -p 8000:8000 aatikah/vul-djangoapp:v1"
                 '''
     }
     }
@@ -344,7 +346,7 @@ pipeline {
                         -H "Content-Type: multipart/form-data" \
                         -F "file=@zap_report.json" \
                         -F 'scan_type=ZAP Scan' \
-                        -F 'engagement=${ENGAGEMENT_ID}' \
+                        -F 'engagement=${ZAP_ENGAGEMENT_ID}' \
                         -F 'product_name=django-pipeline'
                         """,
                         returnStdout: true
