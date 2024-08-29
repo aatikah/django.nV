@@ -287,14 +287,14 @@ pipeline {
                        // sudo docker exec zap zap-baseline.py -t http://34.135.208.39 -J zap_report.json
                     //'''
                     
-                    sh 'sudo docker run -t zaproxy/zap-stable zap-baseline.py -t http://34.135.208.39' -J zap_report.json'
+                    sh 'sudo docker run -t zaproxy/zap-stable zap-baseline.py -t http://34.135.208.39 -J zap_report.json'
                     
                     // Run the ZAP baseline scan and generate a HTML report
                    // sh '''
                        // sudo docker exec zap zap-baseline.py -t http://34.135.208.39 -J zap_report.html
                    // '''
 
-                    sh 'sudo docker run -t zaproxy/zap-stable zap-baseline.py -t http://34.135.208.39' -j zap_report.html'
+                    sh 'sudo docker run -t zaproxy/zap-stable zap-baseline.py -t http://34.135.208.39 -j zap_report.html'
 
                     // Copy the ZAP JSON report out of the Docker container
                    // sh 'sudo docker cp zap:/zap/zap_report.json ./zap_report.json'
