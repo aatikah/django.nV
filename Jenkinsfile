@@ -266,7 +266,7 @@ pipeline {
             steps {
                 sshagent(['tomcatkey']) {
                 sh '''
-                ssh -o StrictHostKeyChecking=no abuabdillah5444@34.135.208.39 "sudo docker pull aatikah/vul-djangoapp:v1 && sudo docker run -d -p 8005:8000 aatikah/vul-djangoapp:v1"
+                ssh -o StrictHostKeyChecking=no abuabdillah5444@34.135.208.39 "sudo docker pull aatikah/vul-djangoapp:v1 && sudo docker run -d -p 8006:8000 aatikah/vul-djangoapp:v1"
                 '''
     }
     }
@@ -288,10 +288,20 @@ pipeline {
                     //'''
                     
                     //sh 'sudo docker run -t zaproxy/zap-stable zap-baseline.py -t http://34.135.208.39 -J zap_report.json'
+                    
+                    //sh '''
+                     //   sudo chmod -R 777 /var/lib/jenkins/workspace/vul-django
+                     //   sudo docker run -v /var/lib/jenkins/workspace/vul-django:/zap/wrk -t zaproxy/zap-stable zap-baseline.py -t http://34.135.208.39 -J zap_report.json || true
+                   // '''
+
                     sh '''
-                        sudo chmod -R 777 /var/lib/jenkins/workspace/vul-django
-                        sudo docker run -v /var/lib/jenkins/workspace/vul-django:/zap/wrk -t zaproxy/zap-stable zap-baseline.py -t http://34.135.208.39 -J zap_report.json || true
+                        USER_ID=$(id -u)
+                        GROUP_ID=$(id -g)
+                        sudo docker run --user $USER_ID:$GROUP_ID -v /var/lib/jenkins/workspace/vul-django:/zap/wrk -t zaproxy/zap-stable zap-baseline.py -t http://34.135.208.39 -J zap_report.json || true
+                        echo "Sleeping for 20 seconds"
+                        sleep 20
                     '''
+
 
                     // Run the ZAP baseline scan and generate a HTML report
                    // sh '''
@@ -299,9 +309,18 @@ pipeline {
                    // '''
 
                     //sh 'sudo docker run -t zaproxy/zap-stable zap-baseline.py -t http://34.135.208.39 -j zap_report.html'
-                   sh '''
-                        sudo chmod -R 777 /var/lib/jenkins/workspace/vul-django
-                        sudo docker run -v /var/lib/jenkins/workspace/vul-django:/zap/wrk -t zaproxy/zap-stable zap-baseline.py -t http://34.135.208.39 -J zap_report.html ||true
+                   
+                    //sh '''
+                       // sudo chmod -R 777 /var/lib/jenkins/workspace/vul-django
+                        //sudo docker run -v /var/lib/jenkins/workspace/vul-django:/zap/wrk -t zaproxy/zap-stable zap-baseline.py -t http://34.135.208.39 -J zap_report.html ||true
+                    //'''
+
+                    sh '''
+                        USER_ID=$(id -u)
+                        GROUP_ID=$(id -g)
+                        sudo docker run --user $USER_ID:$GROUP_ID -v /var/lib/jenkins/workspace/vul-django:/zap/wrk -t zaproxy/zap-stable zap-baseline.py -t http://34.135.208.39 -J zap_report.html || true
+                        echo "Sleeping for 10 seconds"
+                        sleep 10
                     '''
 
                     // Copy the ZAP JSON report out of the Docker container
