@@ -268,7 +268,7 @@ pipeline {
             steps {
                 sshagent(['tomcatkey']) {
                 sh '''
-                ssh -o StrictHostKeyChecking=no abuabdillah5444@34.135.208.39 "sudo docker pull aatikah/vul-djangoapp:v1 && sudo docker run -d -p 8005:8000 aatikah/vul-djangoapp:v1"
+                ssh -o StrictHostKeyChecking=no abuabdillah5444@34.135.208.39 "sudo docker pull aatikah/vul-djangoapp:v1 && sudo docker run -d -p 8006:8000 aatikah/vul-djangoapp:v1"
                 '''
     }
     }
@@ -297,7 +297,7 @@ pipeline {
                         echo "Sleeping for 20 seconds"
                         sleep 20
                      '''
-                    sh 'cat zap_report.json'
+                    sh 'cat zap_report.json || true'
 
                     //sh '''
                         //USER_ID=$(id -u)
@@ -319,9 +319,9 @@ pipeline {
                         sudo chmod -R 777 /var/lib/jenkins/workspace/vul-django
                         sudo docker run -v /var/lib/jenkins/workspace/vul-django:/zap/wrk -t zaproxy/zap-stable zap-baseline.py -t http://34.135.208.39 -J zap_report.html ||true
                         echo "Sleeping for 10 seconds"
-                        sleep 10
+                        sleep 20
                     '''
-                    sh 'cat zap_report.html'
+                    sh 'cat zap_report.html || true'
 
                     //sh '''
                       //  USER_ID=$(id -u)
