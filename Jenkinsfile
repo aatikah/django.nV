@@ -322,6 +322,7 @@ pipeline {
                         sleep 20
                     '''
                     sh 'cat zap_report.html || true'
+                   
 
                     //sh '''
                       //  USER_ID=$(id -u)
