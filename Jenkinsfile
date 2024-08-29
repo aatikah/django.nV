@@ -280,7 +280,7 @@ pipeline {
                     
 
                     // Allow ZAP to start up
-                    sleep 30
+                    sleep 20
 
                     // Run the ZAP baseline scan and generate a JSON report
                     //sh '''
