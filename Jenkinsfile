@@ -8,7 +8,7 @@ pipeline {
         REPOSITORY = 'aatikah'
         IMAGE_NAME = 'vul-djangoapp'
         DOCKER_CREDENTIALS_ID = 'docker-credential'
-        DEFECTDOJO_API_KEY = 'DEFECTDOJO_API_KEY'
+        DEFECTDOJO_API_KEY = credentials('DEFECTDOJO_API_KEY')
         DEFECTDOJO_URL = credentials('DEFECTDOJO_URL')
         GITLEAKS_ENGAGEMENT_ID = '5'
         BANDIT_ENGAGEMENT_ID = '6'
@@ -52,7 +52,7 @@ pipeline {
                 def response = sh(
                         script: """
                         curl -X POST ${DEFECT_DOJO}/api/v2/import-scan/ \
-                        -H "Authorization: Token DEFECTDOJO_API_KEY" \
+                        -H "Authorization: Token ${DEFECTDOJO_API_KEY}" \
                         -H "accept: application/json" \
                         -H "Content-Type: multipart/form-data" \
                         -F "file=@gitleaks_report.json" \
@@ -225,7 +225,7 @@ pipeline {
                     def response = sh(
                         script: """
                         curl -X POST ${DEFECT_DOJO}/api/v2/import-scan/ \
-                        -H "Authorization: Token DEFECTDOJO_API_KEY" \
+                        -H "Authorization: Token ${DEFECTDOJO_API_KEY}" \
                         -H "accept: application/json" \
                         -H "Content-Type: multipart/form-data" \
                         -F "file=@bandit_report.json" \
@@ -268,7 +268,7 @@ pipeline {
             steps {
                 sshagent(['tomcatkey']) {
                 sh '''
-                ssh -o StrictHostKeyChecking=no abuabdillah5444@34.135.208.39 "sudo docker pull aatikah/vul-djangoapp:v1 && sudo docker run -d -p 8002:8000 aatikah/vul-djangoapp:v1"
+                ssh -o StrictHostKeyChecking=no abuabdillah5444@34.135.208.39 "sudo docker pull aatikah/vul-djangoapp:v1 && sudo docker run -d -p 8003:8000 aatikah/vul-djangoapp:v1"
                 '''
     }
     }
@@ -291,18 +291,20 @@ pipeline {
                     
                     //sh 'sudo docker run -t zaproxy/zap-stable zap-baseline.py -t http://34.135.208.39 -J zap_report.json'
                     
-                    //sh '''
-                     //   sudo chmod -R 777 /var/lib/jenkins/workspace/vul-django
-                     //   sudo docker run -v /var/lib/jenkins/workspace/vul-django:/zap/wrk -t zaproxy/zap-stable zap-baseline.py -t http://34.135.208.39 -J zap_report.json || true
-                   // '''
-
                     sh '''
-                        USER_ID=$(id -u)
-                        GROUP_ID=$(id -g)
-                        sudo docker run --user $USER_ID:$GROUP_ID -v /var/lib/jenkins/workspace/vul-django:/zap/wrk -t zaproxy/zap-stable zap-baseline.py -t http://34.135.208.39 -J zap_report.json || true
+                        sudo chmod -R 777 /var/lib/jenkins/workspace/vul-django
+                        sudo docker run -v /var/lib/jenkins/workspace/vul-django:/zap/wrk -t zaproxy/zap-stable zap-baseline.py -t http://34.135.208.39 -J zap_report.json || true
                         echo "Sleeping for 20 seconds"
                         sleep 20
-                    '''
+                     '''
+
+                    //sh '''
+                        //USER_ID=$(id -u)
+                       // GROUP_ID=$(id -g)
+                      //  sudo docker run --user $USER_ID:$GROUP_ID -v /var/lib/jenkins/workspace/vul-django:/zap/wrk -t zaproxy/zap-stable zap-baseline.py -t http://34.135.208.39 -J zap_report.json || true
+                      //  echo "Sleeping for 20 seconds"
+                       // sleep 20
+                    //'''
 
 
                     // Run the ZAP baseline scan and generate a HTML report
@@ -312,18 +314,20 @@ pipeline {
 
                     //sh 'sudo docker run -t zaproxy/zap-stable zap-baseline.py -t http://34.135.208.39 -j zap_report.html'
                    
-                    //sh '''
-                       // sudo chmod -R 777 /var/lib/jenkins/workspace/vul-django
-                        //sudo docker run -v /var/lib/jenkins/workspace/vul-django:/zap/wrk -t zaproxy/zap-stable zap-baseline.py -t http://34.135.208.39 -J zap_report.html ||true
-                    //'''
-
                     sh '''
-                        USER_ID=$(id -u)
-                        GROUP_ID=$(id -g)
-                        sudo docker run --user $USER_ID:$GROUP_ID -v /var/lib/jenkins/workspace/vul-django:/zap/wrk -t zaproxy/zap-stable zap-baseline.py -t http://34.135.208.39 -J zap_report.html || true
+                        sudo chmod -R 777 /var/lib/jenkins/workspace/vul-django
+                        sudo docker run -v /var/lib/jenkins/workspace/vul-django:/zap/wrk -t zaproxy/zap-stable zap-baseline.py -t http://34.135.208.39 -J zap_report.html ||true
                         echo "Sleeping for 10 seconds"
                         sleep 10
                     '''
+
+                    //sh '''
+                      //  USER_ID=$(id -u)
+                      //  GROUP_ID=$(id -g)
+                      //  sudo docker run --user $USER_ID:$GROUP_ID -v /var/lib/jenkins/workspace/vul-django:/zap/wrk -t zaproxy/zap-stable zap-baseline.py -t http://34.135.208.39 -J zap_report.html || true
+                      //  echo "Sleeping for 10 seconds"
+                        //sleep 10
+                    //'''
 
                     // Copy the ZAP JSON report out of the Docker container
                    // sh 'sudo docker cp zap:/zap/zap_report.json ./zap_report.json'
@@ -341,7 +345,7 @@ pipeline {
                     def response = sh(
                         script: """
                         curl -X POST ${DEFECT_DOJO}/api/v2/import-scan/ \
-                        -H "Authorization: Token DEFECTDOJO_API_KEY" \
+                        -H "Authorization: Token ${DEFECTDOJO_API_KEY}" \
                         -H "accept: application/json" \
                         -H "Content-Type: multipart/form-data" \
                         -F "file=@zap_report.json" \
