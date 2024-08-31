@@ -51,20 +51,18 @@ pipeline {
 
                 // Use withCredentials to handle the API key securely
                     withCredentials([string(credentialsId: 'DEFECTDOJO_API_KEY', variable: 'API_KEY')]) {
-                def response = sh(
-                        script: """
-                        curl -X POST '${DEFECT_DOJO}/api/v2/import-scan/' \
-                        -H 'Authorization: Token $API_KEY' \
-                        -H 'accept: application/json' \
-                        -H 'Content-Type: multipart/form-data' \
-                        -F 'file=@gitleaks_report.json' \
-                        -F 'scan_type=Gitleaks Scan' \
-                        -F 'engagement=${GITLEAKS_ENGAGEMENT_ID}' \
-                        -F 'product_name=django-pipeline'
-                            """,
-                            returnStdout: true
-                        ).trim()
-
+                        def curlCommand = """
+                            curl -X POST '${DEFECT_DOJO}/api/v2/import-scan/' \
+                            -H 'Authorization: Token ${API_KEY}' \
+                            -H 'accept: application/json' \
+                            -H 'Content-Type: multipart/form-data' \
+                            -F 'file=@gitleaks_report.json' \
+                            -F 'scan_type=Gitleaks Scan' \
+                            -F 'engagement=${GITLEAKS_ENGAGEMENT_ID}' \
+                            -F 'product_name=django-pipeline'
+                        """
+                        
+                        def response = sh(script: curlCommand, returnStdout: true).trim()
                         echo "Response from DefectDojo: ${response}"
                     }
                    
@@ -226,21 +224,36 @@ pipeline {
                 ])
 
                     // Use withCredentials to handle the API key securely
-                    withCredentials([string(credentialsId: 'DEFECTDOJO_API_KEY', variable: 'API_KEY')]) {
-                    def response = sh(
-                        script: """
-                        curl -X POST '${DEFECT_DOJO}/api/v2/import-scan/' \
-                        -H 'Authorization: Token $API_KEY' \
-                        -H 'accept: application/json' \
-                        -H 'Content-Type: multipart/form-data' \
-                        -F 'file=@bandit_report.json' \
-                        -F 'scan_type=Bandit Scan' \
-                        -F 'engagement=${BANDIT_ENGAGEMENT_ID}' \
-                        -F 'product_name=django-pipeline'
-                            """,
-                            returnStdout: true
-                        ).trim()
+                   // withCredentials([string(credentialsId: 'DEFECTDOJO_API_KEY', variable: 'API_KEY')]) {
+                    //def response = sh(
+                      //  script: """
+                     //   curl -X POST '${DEFECT_DOJO}/api/v2/import-scan/' \
+                     //   -H 'Authorization: Token $API_KEY' \
+                      //  -H 'accept: application/json' \
+                        //-H 'Content-Type: multipart/form-data' \
+                        //-F 'file=@bandit_report.json' \
+                       // -F 'scan_type=Bandit Scan' \
+                        //-F 'engagement=${BANDIT_ENGAGEMENT_ID}' \
+                       // -F 'product_name=django-pipeline'
+                       //     """,
+                        //    returnStdout: true
+                       // ).trim()
 
+                       // echo "Response from DefectDojo: ${response}"
+
+                        withCredentials([string(credentialsId: 'DEFECTDOJO_API_KEY', variable: 'API_KEY')]) {
+                        def curlCommand = """
+                            curl -X POST '${DEFECT_DOJO}/api/v2/import-scan/' \
+                            -H 'Authorization: Token $API_KEY' \
+                            -H 'accept: application/json' \
+                            -H 'Content-Type: multipart/form-data' \
+                            -F 'file=@bandit_report.json' \
+                            -F 'scan_type=Bandit Scan' \
+                            -F 'engagement=${BANDIT_ENGAGEMENT_ID}' \
+                            -F 'product_name=django-pipeline'
+                        """
+                        
+                        def response = sh(script: curlCommand, returnStdout: true).trim()
                         echo "Response from DefectDojo: ${response}"
 
                     }
@@ -273,7 +286,7 @@ pipeline {
             steps {
                 sshagent(['tomcatkey']) {
                 sh '''
-                ssh -o StrictHostKeyChecking=no abuabdillah5444@35.193.155.80 "sudo docker pull aatikah/vul-djangoapp:v1 && sudo docker run -d -p 8007:8000 aatikah/vul-djangoapp:v1"
+                ssh -o StrictHostKeyChecking=no abuabdillah5444@35.193.155.80 "sudo docker pull aatikah/vul-djangoapp:v1 && sudo docker run -d -p 8008:8000 aatikah/vul-djangoapp:v1"
                 '''
     }
     }
@@ -351,9 +364,25 @@ pipeline {
                         ])
                     
                         // Securely use DefectDojo API Key within a credentials block
-                    withCredentials([string(credentialsId: 'DEFECTDOJO_API_KEY', variable: 'API_KEY')]) {
-                        def response = sh(
-                            script: """
+                    //withCredentials([string(credentialsId: 'DEFECTDOJO_API_KEY', variable: 'API_KEY')]) {
+                      //  def response = sh(
+                        //    script: """
+                          //  curl -X POST '${DEFECT_DOJO}/api/v2/import-scan/' \
+                            //-H 'Authorization: Token $API_KEY' \
+                           // -H 'accept: application/json' \
+                           // -H 'Content-Type: multipart/form-data' \
+                          //  -F 'file=@zap_report.json' \
+                          //  -F 'scan_type=ZAP Scan' \
+                          //  -F 'engagement=${ZAP_ENGAGEMENT_ID}' \
+                          //  -F 'product_name=django-pipeline'
+                          //  """,
+                          //  returnStdout: true
+                        //).trim()
+
+                        //echo "Response from DefectDojo: ${response}"
+
+                        withCredentials([string(credentialsId: 'DEFECTDOJO_API_KEY', variable: 'API_KEY')]) {
+                        def curlCommand = """
                             curl -X POST '${DEFECT_DOJO}/api/v2/import-scan/' \
                             -H 'Authorization: Token $API_KEY' \
                             -H 'accept: application/json' \
@@ -362,10 +391,9 @@ pipeline {
                             -F 'scan_type=ZAP Scan' \
                             -F 'engagement=${ZAP_ENGAGEMENT_ID}' \
                             -F 'product_name=django-pipeline'
-                            """,
-                            returnStdout: true
-                        ).trim()
-
+                        """
+                        
+                        def response = sh(script: curlCommand, returnStdout: true).trim()
                         echo "Response from DefectDojo: ${response}"
                     }
                     
