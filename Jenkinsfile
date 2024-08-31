@@ -54,7 +54,7 @@ pipeline {
                 def response = sh(
                         script: """
                         curl -X POST ${DEFECT_DOJO}/api/v2/import-scan/ \
-                        -H "Authorization: Token DEFECTDOJO_API_KEY" \
+                        -H "Authorization: Token ${DEFECTDOJO_API_KEY}" \
                         -H "accept: application/json" \
                         -H "Content-Type: multipart/form-data" \
                         -F "file=@gitleaks_report.json" \
@@ -230,7 +230,7 @@ pipeline {
                     def response = sh(
                         script: """
                         curl -X POST ${DEFECT_DOJO}/api/v2/import-scan/ \
-                        -H "Authorization: Token DEFECTDOJO_API_KEY" \
+                        -H "Authorization: Token ${DEFECTDOJO_API_KEY}" \
                         -H "accept: application/json" \
                         -H "Content-Type: multipart/form-data" \
                         -F "file=@bandit_report.json" \
@@ -273,7 +273,7 @@ pipeline {
             steps {
                 sshagent(['tomcatkey']) {
                 sh '''
-                ssh -o StrictHostKeyChecking=no abuabdillah5444@35.193.155.80 "sudo docker pull aatikah/vul-djangoapp:v1 && sudo docker run -d -p 8001:8000 aatikah/vul-djangoapp:v1"
+                ssh -o StrictHostKeyChecking=no abuabdillah5444@35.193.155.80 "sudo docker pull aatikah/vul-djangoapp:v1 && sudo docker run -d -p 8002:8000 aatikah/vul-djangoapp:v1"
                 '''
     }
     }
@@ -354,7 +354,7 @@ pipeline {
                         def response = sh(
                             script: """
                             curl -X POST ${DEFECT_DOJO}/api/v2/import-scan/ \
-                            -H "Authorization: Token DEFECTDOJO_API_KEY" \
+                            -H "Authorization: Token ${DEFECTDOJO_API_KEY}" \
                             -H "accept: application/json" \
                             -H "Content-Type: multipart/form-data" \
                             -F "file=@zap_report.json" \
