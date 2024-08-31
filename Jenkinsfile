@@ -14,6 +14,7 @@ pipeline {
         BANDIT_ENGAGEMENT_ID = '6'
         ZAP_ENGAGEMENT_ID = '7'
         DEFECT_DOJO = 'http://34.31.173.222:8080'
+        //ARCHERYSEC_URL = 'http://35.232.63.12:8000'
     
     }
     //DEFECTDOJO_API_KEY = 'DEFECTDOJO_API_KEY'
@@ -61,7 +62,7 @@ pipeline {
                             -F 'engagement=${GITLEAKS_ENGAGEMENT_ID}' \
                             -F 'product_name=django-pipeline'
                         """
-                        
+                        sh curlCommand
                        // def response = sh(script: curlCommand, returnStdout: true).trim()
                         //echo "Response from DefectDojo: ${response}"
                     }
@@ -252,7 +253,7 @@ pipeline {
                             -F 'engagement=${BANDIT_ENGAGEMENT_ID}' \
                             -F 'product_name=django-pipeline'
                         """
-                        
+                        sh curlCommand
                         //def response = sh(script: curlCommand, returnStdout: true).trim()
                         //echo "Response from DefectDojo: ${response}"
 
@@ -286,7 +287,7 @@ pipeline {
             steps {
                 sshagent(['tomcatkey']) {
                 sh '''
-                ssh -o StrictHostKeyChecking=no abuabdillah5444@35.193.155.80 "sudo docker pull aatikah/vul-djangoapp:v1 && sudo docker run -d -p 8009:8000 aatikah/vul-djangoapp:v1"
+                ssh -o StrictHostKeyChecking=no abuabdillah5444@35.193.155.80 "sudo docker pull aatikah/vul-djangoapp:v1 && sudo docker run -d -p 8000:8000 aatikah/vul-djangoapp:v1"
                 '''
     }
     }
@@ -392,7 +393,7 @@ pipeline {
                             -F 'engagement=${ZAP_ENGAGEMENT_ID}' \
                             -F 'product_name=django-pipeline'
                         """
-                        
+                        sh curlCommand
                         //def response = sh(script: curlCommand, returnStdout: true).trim()
                         //echo "Response from DefectDojo: ${response}"
                     }
