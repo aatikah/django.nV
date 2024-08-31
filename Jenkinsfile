@@ -14,7 +14,7 @@ pipeline {
         BANDIT_ENGAGEMENT_ID = '6'
         ZAP_ENGAGEMENT_ID = '7'
         DEFECT_DOJO = 'http://34.31.173.222:8080'
-        ARCHERYSEC_URL = 'http://archerysec:8000'
+        ARCHERYSEC_URL = 'http://35.232.63.12:8000'
         ARCHERYSEC_PROJECT_ID = '298f50a8-1e2f-4b03-beb6-392398d125b2'
         ARCHERYSEC_USER = 'abuabdillah5444@gmail.com'
     
@@ -289,7 +289,7 @@ pipeline {
             steps {
                 sshagent(['tomcatkey']) {
                 sh '''
-                ssh -o StrictHostKeyChecking=no abuabdillah5444@35.193.155.80 "sudo docker pull aatikah/vul-djangoapp:v1 && sudo docker run -d -p 8002:8000 aatikah/vul-djangoapp:v1"
+                ssh -o StrictHostKeyChecking=no abuabdillah5444@35.193.155.80 "sudo docker pull aatikah/vul-djangoapp:v1 && sudo docker run -d -p 8003:8000 aatikah/vul-djangoapp:v1"
                 '''
     }
     }
