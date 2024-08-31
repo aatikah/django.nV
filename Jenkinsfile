@@ -8,7 +8,7 @@ pipeline {
         REPOSITORY = 'aatikah'
         IMAGE_NAME = 'vul-djangoapp'
         DOCKER_CREDENTIALS_ID = 'docker-credential'
-        DEFECTDOJO_API_KEY = 'DEFECTDOJO_API_KEY'
+        
         DEFECTDOJO_URL = credentials('DEFECTDOJO_URL')
         GITLEAKS_ENGAGEMENT_ID = '5'
         BANDIT_ENGAGEMENT_ID = '6'
@@ -16,6 +16,7 @@ pipeline {
         DEFECT_DOJO = 'http://34.31.173.222:8080'
     
     }
+    //DEFECTDOJO_API_KEY = 'DEFECTDOJO_API_KEY'
     
     stages {
         stage('Initialize') {
