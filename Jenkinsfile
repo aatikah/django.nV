@@ -289,7 +289,7 @@ pipeline {
             steps {
                 sshagent(['tomcatkey']) {
                 sh '''
-                ssh -o StrictHostKeyChecking=no abuabdillah5444@34.132.231.218 "sudo docker pull aatikah/vul-djangoapp:v1 && sudo docker run -d -p 8002:8000 aatikah/vul-djangoapp:v1"
+                ssh -o StrictHostKeyChecking=no abuabdillah5444@34.132.231.218 "sudo docker pull aatikah/vul-djangoapp:v1 && sudo docker run -d -p 8003:8000 aatikah/vul-djangoapp:v1"
                 '''
     }
     }
