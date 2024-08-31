@@ -54,7 +54,7 @@ pipeline {
                 def response = sh(
                         script: """
                         curl -X POST ${DEFECT_DOJO}/api/v2/import-scan/ \
-                        -H "Authorization: Token ${API_KEY}" \
+                        -H "Authorization: Token $API_KEY" \
                         -H "accept: application/json" \
                         -H "Content-Type: multipart/form-data" \
                         -F "file=@gitleaks_report.json" \
@@ -231,7 +231,7 @@ pipeline {
                     def response = sh(
                         script: """
                         curl -X POST ${DEFECT_DOJO}/api/v2/import-scan/ \
-                        -H "Authorization: Token ${API_KEY}" \
+                        -H "Authorization: Token $API_KEY" \
                         -H "accept: application/json" \
                         -H "Content-Type: multipart/form-data" \
                         -F "file=@bandit_report.json" \
@@ -357,7 +357,7 @@ pipeline {
                         def response = sh(
                             script: """
                             curl -X POST ${DEFECT_DOJO}/api/v2/import-scan/ \
-                            -H "Authorization: Token ${API_KEY}" \
+                            -H "Authorization: Token $API_KEY" \
                             -H "accept: application/json" \
                             -H "Content-Type: multipart/form-data" \
                             -F "file=@zap_report.json" \
