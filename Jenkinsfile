@@ -8,7 +8,7 @@ pipeline {
         REPOSITORY = 'aatikah'
         IMAGE_NAME = 'vul-djangoapp'
         DOCKER_CREDENTIALS_ID = 'docker-credential'
-        //DEFECTDOJO_API_KEY = credentials('DEFECTDOJO_API_KEY')
+        DEFECTDOJO_API_KEY = credentials('DEFECTDOJO_API_KEY')
         DEFECTDOJO_URL = credentials('DEFECTDOJO_URL')
         GITLEAKS_ENGAGEMENT_ID = '5'
         BANDIT_ENGAGEMENT_ID = '6'
@@ -48,7 +48,8 @@ pipeline {
                     echo 'Leaks found. Review the Gitleaks report for details.'
                     }
 
-
+                // Use withCredentials to handle the API key securely
+                    withCredentials([string(credentialsId: 'DEFECTDOJO_API_KEY', variable: 'DEFECTDOJO_API_KEY')]) {
                 def response = sh(
                         script: """
                         curl -X POST ${DEFECT_DOJO}/api/v2/import-scan/ \
@@ -64,6 +65,7 @@ pipeline {
                     ).trim()
 
                     echo "Response from DefectDojo: ${response}"
+                    }
                    
                 }
            }
@@ -222,6 +224,8 @@ pipeline {
                     alwaysLinkToLastBuild: true
                 ])
 
+                    // Use withCredentials to handle the API key securely
+                    withCredentials([string(credentialsId: 'DEFECTDOJO_API_KEY', variable: 'DEFECTDOJO_API_KEY')]) {
                     def response = sh(
                         script: """
                         curl -X POST ${DEFECT_DOJO}/api/v2/import-scan/ \
@@ -238,7 +242,7 @@ pipeline {
 
                     echo "Response from DefectDojo: ${response}"
 
-                    
+                    }
                 }
             }
         }
