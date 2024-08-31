@@ -8,12 +8,12 @@ pipeline {
         REPOSITORY = 'aatikah'
         IMAGE_NAME = 'vul-djangoapp'
         DOCKER_CREDENTIALS_ID = 'docker-credential'
-        DEFECTDOJO_API_KEY = credentials('DEFECTDOJO_API_KEY')
+        //DEFECTDOJO_API_KEY = credentials('DEFECTDOJO_API_KEY')
         DEFECTDOJO_URL = credentials('DEFECTDOJO_URL')
         GITLEAKS_ENGAGEMENT_ID = '5'
         BANDIT_ENGAGEMENT_ID = '6'
         ZAP_ENGAGEMENT_ID = '7'
-        DEFECT_DOJO = 'http://34.133.12.98:8080'
+        DEFECT_DOJO = 'http://34.31.173.222:8080'
     
     }
     
@@ -268,7 +268,7 @@ pipeline {
             steps {
                 sshagent(['tomcatkey']) {
                 sh '''
-                ssh -o StrictHostKeyChecking=no abuabdillah5444@34.135.208.39 "sudo docker pull aatikah/vul-djangoapp:v1 && sudo docker run -d -p 8006:8000 aatikah/vul-djangoapp:v1"
+                ssh -o StrictHostKeyChecking=no abuabdillah5444@35.193.155.80 "sudo docker pull aatikah/vul-djangoapp:v1 && sudo docker run -d -p 8006:8000 aatikah/vul-djangoapp:v1"
                 '''
     }
     }
@@ -293,7 +293,7 @@ pipeline {
                     
                     sh '''
                         sudo chmod -R 777 /var/lib/jenkins/workspace/vul-django
-                        sudo docker run -v /var/lib/jenkins/workspace/vul-django:/zap/wrk -t zaproxy/zap-stable zap-baseline.py -t http://34.135.208.39 -J zap_report.json || true
+                        sudo docker run -v /var/lib/jenkins/workspace/vul-django:/zap/wrk -t zaproxy/zap-stable zap-baseline.py -t http://35.193.155.80 -J zap_report.json || true
                         echo "Sleeping for 20 seconds"
                         sleep 20
                      '''
@@ -317,7 +317,7 @@ pipeline {
                    
                     sh '''
                         sudo chmod -R 777 /var/lib/jenkins/workspace/vul-django
-                        sudo docker run -v /var/lib/jenkins/workspace/vul-django:/zap/wrk -t zaproxy/zap-stable zap-baseline.py -t http://34.135.208.39 -J zap_report.html ||true
+                        sudo docker run -v /var/lib/jenkins/workspace/vul-django:/zap/wrk -t zaproxy/zap-stable zap-baseline.py -t http://35.193.155.80 -J zap_report.html ||true
                         echo "Sleeping for 10 seconds"
                         sleep 20
                     '''
@@ -344,22 +344,25 @@ pipeline {
                             reportFiles: 'zap_report.html',
                             reportName: 'OWASP ZAP Report'
                         ])
+                    // Use withCredentials to handle the API key securely
+                    withCredentials([string(credentialsId: 'DEFECTDOJO_API_KEY', variable: 'DEFECTDOJO_API_KEY')]) {
+                        def response = sh(
+                            script: """
+                            curl -X POST ${DEFECT_DOJO}/api/v2/import-scan/ \
+                            -H "Authorization: Token ${DEFECTDOJO_API_KEY}" \
+                            -H "accept: application/json" \
+                            -H "Content-Type: multipart/form-data" \
+                            -F "file=@zap_report.json" \
+                            -F 'scan_type=ZAP Scan' \
+                            -F 'engagement=${ZAP_ENGAGEMENT_ID}' \
+                            -F 'product_name=django-pipeline'
+                            """,
+                            returnStdout: true
+                        ).trim()
 
-                    def response = sh(
-                        script: """
-                        curl -X POST ${DEFECT_DOJO}/api/v2/import-scan/ \
-                        -H "Authorization: Token ${DEFECTDOJO_API_KEY}" \
-                        -H "accept: application/json" \
-                        -H "Content-Type: multipart/form-data" \
-                        -F "file=@zap_report.json" \
-                        -F 'scan_type=ZAP Scan' \
-                        -F 'engagement=${ZAP_ENGAGEMENT_ID}' \
-                        -F 'product_name=django-pipeline'
-                        """,
-                        returnStdout: true
-                    ).trim()
-
-                    echo "Response from DefectDojo: ${response}"
+                        echo "Response from DefectDojo: ${response}"
+                    }
+                    
                 
             }
         }
