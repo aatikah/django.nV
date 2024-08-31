@@ -8,7 +8,7 @@ pipeline {
         REPOSITORY = 'aatikah'
         IMAGE_NAME = 'vul-djangoapp'
         DOCKER_CREDENTIALS_ID = 'docker-credential'
-        DEFECTDOJO_API_KEY = credentials('DEFECTDOJO_API_KEY')
+        DEFECTDOJO_API_KEY = 'DEFECTDOJO_API_KEY'
         DEFECTDOJO_URL = credentials('DEFECTDOJO_URL')
         GITLEAKS_ENGAGEMENT_ID = '5'
         BANDIT_ENGAGEMENT_ID = '6'
@@ -53,7 +53,7 @@ pipeline {
                 def response = sh(
                         script: """
                         curl -X POST ${DEFECT_DOJO}/api/v2/import-scan/ \
-                        -H "Authorization: Token ${DEFECTDOJO_API_KEY}" \
+                        -H "Authorization: Token DEFECTDOJO_API_KEY" \
                         -H "accept: application/json" \
                         -H "Content-Type: multipart/form-data" \
                         -F "file=@gitleaks_report.json" \
@@ -229,7 +229,7 @@ pipeline {
                     def response = sh(
                         script: """
                         curl -X POST ${DEFECT_DOJO}/api/v2/import-scan/ \
-                        -H "Authorization: Token ${DEFECTDOJO_API_KEY}" \
+                        -H "Authorization: Token DEFECTDOJO_API_KEY" \
                         -H "accept: application/json" \
                         -H "Content-Type: multipart/form-data" \
                         -F "file=@bandit_report.json" \
@@ -272,7 +272,7 @@ pipeline {
             steps {
                 sshagent(['tomcatkey']) {
                 sh '''
-                ssh -o StrictHostKeyChecking=no abuabdillah5444@35.193.155.80 "sudo docker pull aatikah/vul-djangoapp:v1 && sudo docker run -d -p 8006:8000 aatikah/vul-djangoapp:v1"
+                ssh -o StrictHostKeyChecking=no abuabdillah5444@35.193.155.80 "sudo docker pull aatikah/vul-djangoapp:v1 && sudo docker run -d -p 8000:8000 aatikah/vul-djangoapp:v1"
                 '''
     }
     }
@@ -353,7 +353,7 @@ pipeline {
                         def response = sh(
                             script: """
                             curl -X POST ${DEFECT_DOJO}/api/v2/import-scan/ \
-                            -H "Authorization: Token ${DEFECTDOJO_API_KEY}" \
+                            -H "Authorization: Token DEFECTDOJO_API_KEY" \
                             -H "accept: application/json" \
                             -H "Content-Type: multipart/form-data" \
                             -F "file=@zap_report.json" \
