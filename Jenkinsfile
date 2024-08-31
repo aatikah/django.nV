@@ -50,11 +50,11 @@ pipeline {
                     }
 
                 // Use withCredentials to handle the API key securely
-                    withCredentials([string(credentialsId: 'DEFECTDOJO_API_KEY', variable: 'DEFECTDOJO_API_KEY')]) {
+                    withCredentials([string(credentialsId: 'DEFECTDOJO_API_KEY', variable: 'API_KEY')]) {
                 def response = sh(
                         script: """
                         curl -X POST ${DEFECT_DOJO}/api/v2/import-scan/ \
-                        -H "Authorization: Token ${DEFECTDOJO_API_KEY}" \
+                        -H "Authorization: Token ${API_KEY}" \
                         -H "accept: application/json" \
                         -H "Content-Type: multipart/form-data" \
                         -F "file=@gitleaks_report.json" \
@@ -227,11 +227,11 @@ pipeline {
                 ])
 
                     // Use withCredentials to handle the API key securely
-                    withCredentials([string(credentialsId: 'DEFECTDOJO_API_KEY', variable: 'DEFECTDOJO_API_KEY')]) {
+                    withCredentials([string(credentialsId: 'DEFECTDOJO_API_KEY', variable: 'API_KEY')]) {
                     def response = sh(
                         script: """
                         curl -X POST ${DEFECT_DOJO}/api/v2/import-scan/ \
-                        -H "Authorization: Token ${DEFECTDOJO_API_KEY}" \
+                        -H "Authorization: Token ${API_KEY}" \
                         -H "accept: application/json" \
                         -H "Content-Type: multipart/form-data" \
                         -F "file=@bandit_report.json" \
@@ -353,11 +353,11 @@ pipeline {
                         ])
                     
                         // Securely use DefectDojo API Key within a credentials block
-                    withCredentials([string(credentialsId: 'DEFECTDOJO_API_KEY', variable: 'DEFECTDOJO_API_KEY')]) {
+                    withCredentials([string(credentialsId: 'DEFECTDOJO_API_KEY', variable: 'API_KEY')]) {
                         def response = sh(
                             script: """
                             curl -X POST ${DEFECT_DOJO}/api/v2/import-scan/ \
-                            -H "Authorization: Token ${DEFECTDOJO_API_KEY}" \
+                            -H "Authorization: Token ${API_KEY}" \
                             -H "accept: application/json" \
                             -H "Content-Type: multipart/form-data" \
                             -F "file=@zap_report.json" \
