@@ -61,11 +61,12 @@ pipeline {
                         -F 'scan_type=Gitleaks Scan' \
                         -F 'engagement=${GITLEAKS_ENGAGEMENT_ID}' \
                         -F 'product_name=django-pipeline'
-                        """,
-                        returnStdout: true
-                    ).trim()
+                            """,
+                            returnStdout: true,
+                            mask: true // Prevents showing the command in the logs
+                        ).trim()
 
-                    echo "Response from DefectDojo: ${response}"
+                        echo "Response from DefectDojo: ${response}"
                     }
                    
                 }
@@ -237,11 +238,12 @@ pipeline {
                         -F 'scan_type=Bandit Scan' \
                         -F 'engagement=${BANDIT_ENGAGEMENT_ID}' \
                         -F 'product_name=django-pipeline'
-                        """,
-                        returnStdout: true
-                    ).trim()
+                            """,
+                            returnStdout: true,
+                            mask: true // Prevents showing the command in the logs
+                        ).trim()
 
-                    echo "Response from DefectDojo: ${response}"
+                        echo "Response from DefectDojo: ${response}"
 
                     }
                 }
@@ -273,7 +275,7 @@ pipeline {
             steps {
                 sshagent(['tomcatkey']) {
                 sh '''
-                ssh -o StrictHostKeyChecking=no abuabdillah5444@35.193.155.80 "sudo docker pull aatikah/vul-djangoapp:v1 && sudo docker run -d -p 8002:8000 aatikah/vul-djangoapp:v1"
+                ssh -o StrictHostKeyChecking=no abuabdillah5444@35.193.155.80 "sudo docker pull aatikah/vul-djangoapp:v1 && sudo docker run -d -p 8003:8000 aatikah/vul-djangoapp:v1"
                 '''
     }
     }
@@ -349,7 +351,8 @@ pipeline {
                             reportFiles: 'zap_report.html',
                             reportName: 'OWASP ZAP Report'
                         ])
-                    // Use withCredentials to handle the API key securely
+                    
+                        // Securely use DefectDojo API Key within a credentials block
                     withCredentials([string(credentialsId: 'DEFECTDOJO_API_KEY', variable: 'DEFECTDOJO_API_KEY')]) {
                         def response = sh(
                             script: """
@@ -362,7 +365,8 @@ pipeline {
                             -F 'engagement=${ZAP_ENGAGEMENT_ID}' \
                             -F 'product_name=django-pipeline'
                             """,
-                            returnStdout: true
+                            returnStdout: true,
+                            mask: true // Prevents showing the command in the logs
                         ).trim()
 
                         echo "Response from DefectDojo: ${response}"
