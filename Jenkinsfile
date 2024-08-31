@@ -14,7 +14,9 @@ pipeline {
         BANDIT_ENGAGEMENT_ID = '6'
         ZAP_ENGAGEMENT_ID = '7'
         DEFECT_DOJO = 'http://34.31.173.222:8080'
-        ARCHERYSEC_URL = 'http://35.232.63.12:8000'
+        ARCHERYSEC_URL = 'http://archerysec:8000'
+        ARCHERYSEC_PROJECT_ID = '298f50a8-1e2f-4b03-beb6-392398d125b2'
+        ARCHERYSEC_USER = 'abuabdillah5444@gmail.com'
     
     }
     //DEFECTDOJO_API_KEY = 'DEFECTDOJO_API_KEY'
@@ -400,14 +402,17 @@ pipeline {
 
                     // Send ZAP scan results to ArcherySec
                     withCredentials([string(credentialsId: 'archerysec', variable: 'ARCHERYSEC_API_KEY')]) {
-                        def archerySecCurl = """
-                            curl -X POST '${ARCHERYSEC_URL}/api/v1/scans/' \
-                            -H 'Authorization: Token ${ARCHERYSEC_API_KEY}' \
-                            -H 'Content-Type: application/json' \
-                            -d '{"scan_url": "http://35.193.155.80", "scan_type": "zap_scan", "scan_file": "/zap/wrk/zap_report.json"}'
+                        def archerysecCommand = """
+                            curl -X POST '${ARCHERYSEC_URL}/api/v1/uploadscan/' \
+                            -H 'Authorization: ${ARCHERYSEC_API_KEY}' \
+                            -H 'Content-Type: multipart/form-data' \
+                            -F 'scanner=zap_scan' \
+                            -F 'file=@zap_report.json' \
+                            -F 'scan_url=http://35.193.155.80' \
+                            -F 'project_id=${ARCHERYSEC_PROJECT_ID}' \
+                            -F 'username=${ARCHERYSEC_USER}'
                         """
-                        sh archerySecCurl
-                        echo "Response from DefectDojo: ${archerySecCurl}"
+                        sh archerysecCommand
                     }
                     
                     
