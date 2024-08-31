@@ -14,7 +14,7 @@ pipeline {
         BANDIT_ENGAGEMENT_ID = '6'
         ZAP_ENGAGEMENT_ID = '7'
         DEFECT_DOJO = 'http://34.31.173.222:8080'
-        //ARCHERYSEC_URL = 'http://35.232.63.12:8000'
+        ARCHERYSEC_URL = 'http://35.232.63.12:8000'
     
     }
     //DEFECTDOJO_API_KEY = 'DEFECTDOJO_API_KEY'
@@ -62,7 +62,7 @@ pipeline {
                             -F 'engagement=${GITLEAKS_ENGAGEMENT_ID}' \
                             -F 'product_name=django-pipeline'
                         """
-                        sh curlCommand
+                        //sh curlCommand
                        // def response = sh(script: curlCommand, returnStdout: true).trim()
                         //echo "Response from DefectDojo: ${response}"
                     }
@@ -253,7 +253,7 @@ pipeline {
                             -F 'engagement=${BANDIT_ENGAGEMENT_ID}' \
                             -F 'product_name=django-pipeline'
                         """
-                        sh curlCommand
+                        //sh curlCommand
                         //def response = sh(script: curlCommand, returnStdout: true).trim()
                         //echo "Response from DefectDojo: ${response}"
 
@@ -393,10 +393,22 @@ pipeline {
                             -F 'engagement=${ZAP_ENGAGEMENT_ID}' \
                             -F 'product_name=django-pipeline'
                         """
-                        sh curlCommand
+                        //sh curlCommand
                         //def response = sh(script: curlCommand, returnStdout: true).trim()
                         //echo "Response from DefectDojo: ${response}"
                     }
+
+                    // Send ZAP scan results to ArcherySec
+                    withCredentials([string(credentialsId: 'archerysec', variable: 'ARCHERYSEC_API_KEY')]) {
+                        def archerySecCurl = """
+                            curl -X POST '${ARCHERYSEC_URL}/api/v1/scans/' \
+                            -H 'Authorization: Token ${ARCHERYSEC_API_KEY}' \
+                            -H 'Content-Type: application/json' \
+                            -d '{"scan_url": "http://35.193.155.80", "scan_type": "zap_scan", "scan_file": "/zap/wrk/zap_report.json"}'
+                        """
+                        sh archerySecCurl
+                    }
+                    
                     
                 
             }
