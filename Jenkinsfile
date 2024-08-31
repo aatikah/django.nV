@@ -53,14 +53,14 @@ pipeline {
                     withCredentials([string(credentialsId: 'DEFECTDOJO_API_KEY', variable: 'API_KEY')]) {
                 def response = sh(
                         script: """
-                        curl -X POST ${DEFECT_DOJO}/api/v2/import-scan/ \
-                        -H "Authorization: Token $API_KEY" \
-                        -H "accept: application/json" \
-                        -H "Content-Type: multipart/form-data" \
-                        -F "file=@gitleaks_report.json" \
-                        -F "scan_type=Gitleaks Scan" \
-                        -F "engagement=${GITLEAKS_ENGAGEMENT_ID}" \
-                        -F "product_name=django-pipeline"
+                        curl -X POST '${DEFECT_DOJO}/api/v2/import-scan/' \
+                        -H 'Authorization: Token $API_KEY' \
+                        -H 'accept: application/json' \
+                        -H 'Content-Type: multipart/form-data' \
+                        -F 'file=@gitleaks_report.json' \
+                        -F 'scan_type=Gitleaks Scan' \
+                        -F 'engagement=${GITLEAKS_ENGAGEMENT_ID}' \
+                        -F 'product_name=django-pipeline'
                             """,
                             returnStdout: true
                         ).trim()
@@ -229,14 +229,14 @@ pipeline {
                     withCredentials([string(credentialsId: 'DEFECTDOJO_API_KEY', variable: 'API_KEY')]) {
                     def response = sh(
                         script: """
-                        curl -X POST ${DEFECT_DOJO}/api/v2/import-scan/ \
-                        -H "Authorization: Token $API_KEY" \
-                        -H "accept: application/json" \
-                        -H "Content-Type: multipart/form-data" \
-                        -F "file=@bandit_report.json" \
-                        -F "scan_type=Bandit Scan" \
-                        -F "engagement=${BANDIT_ENGAGEMENT_ID}" \
-                        -F "product_name=django-pipeline"
+                        curl -X POST '${DEFECT_DOJO}/api/v2/import-scan/' \
+                        -H 'Authorization: Token $API_KEY' \
+                        -H 'accept: application/json' \
+                        -H 'Content-Type: multipart/form-data' \
+                        -F 'file=@bandit_report.json' \
+                        -F 'scan_type=Bandit Scan' \
+                        -F 'engagement=${BANDIT_ENGAGEMENT_ID}' \
+                        -F 'product_name=django-pipeline'
                             """,
                             returnStdout: true
                         ).trim()
@@ -273,7 +273,7 @@ pipeline {
             steps {
                 sshagent(['tomcatkey']) {
                 sh '''
-                ssh -o StrictHostKeyChecking=no abuabdillah5444@35.193.155.80 "sudo docker pull aatikah/vul-djangoapp:v1 && sudo docker run -d -p 8005:8000 aatikah/vul-djangoapp:v1"
+                ssh -o StrictHostKeyChecking=no abuabdillah5444@35.193.155.80 "sudo docker pull aatikah/vul-djangoapp:v1 && sudo docker run -d -p 8007:8000 aatikah/vul-djangoapp:v1"
                 '''
     }
     }
@@ -354,14 +354,14 @@ pipeline {
                     withCredentials([string(credentialsId: 'DEFECTDOJO_API_KEY', variable: 'API_KEY')]) {
                         def response = sh(
                             script: """
-                            curl -X POST ${DEFECT_DOJO}/api/v2/import-scan/ \
-                            -H "Authorization: Token $API_KEY" \
-                            -H "accept: application/json" \
-                            -H "Content-Type: multipart/form-data" \
-                            -F "file=@zap_report.json" \
-                            -F "scan_type=ZAP Scan" \
-                            -F "engagement=${ZAP_ENGAGEMENT_ID}" \
-                           -F "product_name=django-pipeline"
+                            curl -X POST '${DEFECT_DOJO}/api/v2/import-scan/' \
+                            -H 'Authorization: Token $API_KEY' \
+                            -H 'accept: application/json' \
+                            -H 'Content-Type: multipart/form-data' \
+                            -F 'file=@zap_report.json' \
+                            -F 'scan_type=ZAP Scan' \
+                            -F 'engagement=${ZAP_ENGAGEMENT_ID}' \
+                            -F 'product_name=django-pipeline'
                             """,
                             returnStdout: true
                         ).trim()
