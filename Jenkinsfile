@@ -62,8 +62,8 @@ pipeline {
                             -F 'product_name=django-pipeline'
                         """
                         
-                        def response = sh(script: curlCommand, returnStdout: true).trim()
-                        echo "Response from DefectDojo: ${response}"
+                       // def response = sh(script: curlCommand, returnStdout: true).trim()
+                        //echo "Response from DefectDojo: ${response}"
                     }
                    
                 }
@@ -253,8 +253,8 @@ pipeline {
                             -F 'product_name=django-pipeline'
                         """
                         
-                        def response = sh(script: curlCommand, returnStdout: true).trim()
-                        echo "Response from DefectDojo: ${response}"
+                        //def response = sh(script: curlCommand, returnStdout: true).trim()
+                        //echo "Response from DefectDojo: ${response}"
 
                     }
                 }
@@ -286,7 +286,7 @@ pipeline {
             steps {
                 sshagent(['tomcatkey']) {
                 sh '''
-                ssh -o StrictHostKeyChecking=no abuabdillah5444@35.193.155.80 "sudo docker pull aatikah/vul-djangoapp:v1 && sudo docker run -d -p 8008:8000 aatikah/vul-djangoapp:v1"
+                ssh -o StrictHostKeyChecking=no abuabdillah5444@35.193.155.80 "sudo docker pull aatikah/vul-djangoapp:v1 && sudo docker run -d -p 8009:8000 aatikah/vul-djangoapp:v1"
                 '''
     }
     }
@@ -393,8 +393,8 @@ pipeline {
                             -F 'product_name=django-pipeline'
                         """
                         
-                        def response = sh(script: curlCommand, returnStdout: true).trim()
-                        echo "Response from DefectDojo: ${response}"
+                        //def response = sh(script: curlCommand, returnStdout: true).trim()
+                        //echo "Response from DefectDojo: ${response}"
                     }
                     
                 
