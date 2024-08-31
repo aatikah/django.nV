@@ -415,15 +415,22 @@ pipeline {
                         sh archerysecCommand
                     }
 
-                    sh '''
-                    rm -rf archerysec_env
-                    python3 -m venv archerysec_env
-                    . archerysec_env/bin/activate
-                    pip install archerysec-cli
+                   // sh '''
+                   // rm -rf archerysec_env
+                    //python3 -m venv archerysec_env
+                   // . archerysec_env/bin/activate
+                   // pip install archerysec-cli
                     
-                    mkdir -p /tmp/archerysec-scans-report
-                    archerysec-cli -h http://34.72.237.173:8000 -t cHnQc3bpwLV3sMfiRAj2jLr42O_fGkyvYmt11KY7GD8Tjv5CbYWlG0Dqps49tDcq --cicd_id=032ce5e4-0d26-4a28-af1d-c53d512e644b --project=298f50a8-1e2f-4b03-beb6-392398d125b2 --zap-base-line-scan --report_path=/tmp/archerysec-scans-report/ --verbose
-                  '''
+                   // mkdir -p /tmp/archerysec-scans-report
+                  //  archerysec-cli -h http://34.72.237.173:8000 -t cHnQc3bpwLV3sMfiRAj2jLr42O_fGkyvYmt11KY7GD8Tjv5CbYWlG0Dqps49tDcq --cicd_id=032ce5e4-0d26-4a28-af1d-c53d512e644b --project=298f50a8-1e2f-4b03-beb6-392398d125b2 --zap-base-line-scan --report_path=/tmp/archerysec-scans-report/ --verbose
+                //  '''
+                    sh 'rm -rf archerysec_env'
+                    sh 'python3 -m venv archerysec_env'
+                    sh '. archerysec_env/bin/activate'
+                    sh 'pip install archerysec-cli'
+                    sh 'mkdir -p /tmp/archerysec-scans-report'
+                    sh 'archerysec-cli -h http://34.72.237.173:8000 -t cHnQc3bpwLV3sMfiRAj2jLr42O_fGkyvYmt11KY7GD8Tjv5CbYWlG0Dqps49tDcq --cicd_id=032ce5e4-0d26-4a28-af1d-c53d512e644b --project=298f50a8-1e2f-4b03-beb6-392398d125b2 --zap-base-line-scan --report_path=/tmp/archerysec-scans-report/ --verbose || true'
+                    
 
                     
                     
