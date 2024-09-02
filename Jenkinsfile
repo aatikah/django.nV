@@ -493,7 +493,7 @@ pipeline {
                        echo "Sleeping for 10 seconds"
                         sleep 20
                     '''
-                    sh 'cat zap_report.json || true'
+                    sh 'cat zap-report.json.json || true'
         
                 // Export the ZAP report to DefectDojo
                 script {
