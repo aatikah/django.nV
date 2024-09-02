@@ -486,19 +486,19 @@ pipeline {
                 // Allow ZAP to start up
                    // sleep 10
 
-                   
+                   //sudo docker run -v /var/lib/jenkins/workspace/vul-django:/zap/wrk -t zaproxy/zap-stable zap-baseline.py -t http://34.123.8.118 -j zap-report.json ||true
+                        //sudo docker run --rm -v /var/lib/jenkins/workspace/vul-django:/zap/wrk -t zaproxy/zap-stable zap.sh -cmd -quickurl http://34.123.8.118 -quickout /zap/wrk/zap-report.json
                     sh '''
                         sudo chmod -R 777 /var/lib/jenkins/workspace/vul-django
-                        //sudo docker run -v /var/lib/jenkins/workspace/vul-django:/zap/wrk -t zaproxy/zap-stable zap-baseline.py -t http://34.123.8.118 -j zap-report.json ||true
-                        //sudo docker run --rm -v /var/lib/jenkins/workspace/vul-django:/zap/wrk -t zaproxy/zap-stable zap.sh -cmd -quickurl http://34.123.8.118 -quickout /zap/wrk/zap-report.json
+                        
 
-                        //Remove any existing report file
+                        
                         sh 'rm -f zap-report.json'
                         
-                        // Run the ZAP scan without volume mapping
+                       
                         sudo docker run --name zap-scan-container -t zaproxy/zap-stable zap-baseline.py -t http://34.123.8.118 -j zap-report.json
                         
-                        // Copy the zap-report.json from the container to the Jenkins workspace
+                       
                         sudo docker cp zap-scan-container:/zap/zap-report.json /var/lib/jenkins/workspace/vul-django/zap-report.json
 
                         echo "Sleeping for 20 seconds"
