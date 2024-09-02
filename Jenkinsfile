@@ -91,6 +91,7 @@ pipeline {
                 }
            }
         }
+        }
 
         
         
@@ -442,10 +443,10 @@ pipeline {
                     def targetUrl = 'http://34.123.8.118'
 
                     // Run the Nikto scan command
-                    sh '/opt/nikto/program/nikto.pl -h ${targetUrl} -o nikto_scan_results.html || true'
+                    sh '/opt/nikto/program/nikto.pl -h ${targetUrl} -o nikto_scan_results.html'
                     sh 'cat nikto_scan_results.html'
                     
-                    sh '/opt/nikto/program/nikto.pl -h ${targetUrl} -o nikto_scan_results.json || true'
+                    sh '/opt/nikto/program/nikto.pl -h ${targetUrl} -o nikto_scan_results.json'
                     sh 'cat nikto_scan_results.json'
 
                     // Use the Jenkins HTML Publisher Plugin to display the report
@@ -476,7 +477,8 @@ pipeline {
             }
         }
     }
+    
+        }
+
     }
-}
-         
 
