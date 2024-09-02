@@ -506,7 +506,6 @@ pipeline {
                         url: defectdojoUrl,
                         requestBody: zapReport,
                         httpMode: 'POST',
-                        contentType: 'text/html',
                         customHeaders: [
                             [name: 'Authorization', value: "Token ${defectdojoApiKey}"],
                             [name: 'product', value: defectdojoProduct]
