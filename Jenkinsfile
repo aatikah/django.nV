@@ -479,6 +479,42 @@ pipeline {
             }
         }
     }
+
+        stage('OWASP ZAP Scan') {
+            steps {
+                // Run OWASP ZAP scan on the target URL
+                owaspZapScan(
+                    target: 'http://34.123.8.118',
+                    reportName: 'zap-report.html',
+                    reportDir: '.'
+                )
+        
+                // Export the ZAP report to DefectDojo
+                script {
+                    def zapReport = readFile 'zap-report.html'
+                    def defectdojoUrl = 'http://34.170.177.2/api/v2/importscan/'
+                    def defectdojoApiKey = 'f830c3e36636fa2224d00c80d49ecbac37254d96'
+                    def defectdojoProduct = 'django-pipeline'
+        
+                    def response = httpRequest(
+                        url: defectdojoUrl,
+                        requestBody: zapReport,
+                        httpMode: 'POST',
+                        contentType: 'text/html',
+                        customHeaders: [
+                            [name: 'Authorization', value: "Token ${defectdojoApiKey}"],
+                            [name: 'product', value: defectdojoProduct]
+                        ]
+                    )
+        
+                    if (response.status == 201) {
+                        println 'ZAP report exported to DefectDojo successfully'
+                    } else {
+                        error "Failed to export ZAP report to DefectDojo: ${response.status} - ${response.content}"
+                    }
+                }
+            }
+}
     
     }
 
