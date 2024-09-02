@@ -492,8 +492,8 @@ pipeline {
                         //sudo docker run -v /var/lib/jenkins/workspace/vul-django:/zap/wrk -t zaproxy/zap-stable zap-baseline.py -t http://34.123.8.118 -j zap-report.json ||true
                         sudo docker run --rm -v /var/lib/jenkins/workspace/vul-django:/zap/wrk -t zaproxy/zap-stable zap.sh -cmd -quickurl http://34.123.8.118 -quickout /zap/wrk/zap-report.json
 
-                        echo "Sleeping for 30 seconds"
-                        sleep 30
+                        //echo "Sleeping for 30 seconds"
+                       // sleep 30
                     '''
                     sh 'cat zap-report.json.json || true'
         
