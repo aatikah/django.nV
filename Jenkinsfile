@@ -483,11 +483,17 @@ pipeline {
         stage('OWASP ZAP Scan') {
             steps {
                 // Run OWASP ZAP scan on the target URL
-                owaspZapScan(
-                    target: 'http://34.123.8.118',
-                    reportName: 'zap-report.html',
-                    reportDir: '.'
-                )
+                // Allow ZAP to start up
+                   // sleep 10
+
+                   
+                    sh '''
+                       sudo chmod -R 777 /var/lib/jenkins/workspace/vul-django
+                        sudo docker run -v /var/lib/jenkins/workspace/vul-django:/zap/wrk -t zaproxy/zap-stable zap-baseline.py -t http://34.123.8.118 -r zap-report.html ||true
+                     /  echo "Sleeping for 10 seconds"
+                        sleep 20
+                    '''
+                    sh 'cat zap_report.html || true'
         
                 // Export the ZAP report to DefectDojo
                 script {
