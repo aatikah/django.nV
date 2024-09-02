@@ -289,7 +289,7 @@ pipeline {
             steps {
                 sshagent(['tomcatkey']) {
                 sh '''
-                ssh -o StrictHostKeyChecking=no abuabdillah5444@34.123.8.118 "sudo docker pull aatikah/vul-djangoapp:v1 && sudo docker run -d -p 8004:8000 aatikah/vul-djangoapp:v1"
+                ssh -o StrictHostKeyChecking=no abuabdillah5444@34.123.8.118 "sudo docker pull aatikah/vul-djangoapp:v1 && sudo docker run -d -p 8005:8000 aatikah/vul-djangoapp:v1"
                 '''
     }
     }
@@ -401,32 +401,46 @@ pipeline {
                     }
 
                     // Send ZAP scan results to ArcherySec
-                    withCredentials([string(credentialsId: 'archerysec', variable: 'ARCHERYSEC_API_KEY')]) {
-                        def archerysecCommand = """
-                            curl -X POST '${ARCHERYSEC_URL}/api/v1/uploadscan/' \
-                            -H 'Authorization: ${ARCHERYSEC_API_KEY}' \
-                            -H 'Content-Type: multipart/form-data' \
-                            -F 'scanner=zap_scan' \
-                            -F 'file=@zap_report.json' \
-                            -F 'scan_url=http://34.132.231.218' \
-                            -F 'project_id=${ARCHERYSEC_PROJECT_ID}' \
-                            -F 'username=${ARCHERYSEC_USER}'
-                        """
-                        sh archerysecCommand
-                    }
+                    //withCredentials([string(credentialsId: 'archerysec', variable: 'ARCHERYSEC_API_KEY')]) {
+                       // def archerysecCommand = """
+                        //    curl -X POST '${ARCHERYSEC_URL}/api/v1/uploadscan/' \
+                           // -H 'Authorization: ${ARCHERYSEC_API_KEY}' \
+                           // -H 'Content-Type: multipart/form-data' \
+                           // -F 'scanner=zap_scan' \
+                           // -F 'file=@zap_report.json' \
+                           // -F 'scan_url=http://34.132.231.218' \
+                         //   -F 'project_id=${ARCHERYSEC_PROJECT_ID}' \
+                          //  -F 'username=${ARCHERYSEC_USER}'
+                      //  """
+                        //sh archerysecCommand
+                    //}
 
-                    sh '''
-                    rm -rf archerysec_env
-                    python3 -m venv archerysec_env
-                    . archerysec_env/bin/activate
-                    pip install archerysec-cli
-                    mkdir -p /tmp/archerysec-scans-report
-                    archerysec-cli -h http://34.170.65.15:8000 -t cHnQc3bpwLV3sMfiRAj2jLr42O_fGkyvYmt11KY7GD8Tjv5CbYWlG0Dqps49tDcq --cicd_id=032ce5e4-0d26-4a28-af1d-c53d512e644b --project=298f50a8-1e2f-4b03-beb6-392398d125b2 --zap-base-line-scan --report_path=/tmp/archerysec-scans-report/
-                  '''
+                   // sh '''
+                   // rm -rf archerysec_env
+                   // python3 -m venv archerysec_env
+                   // . archerysec_env/bin/activate
+                  //  pip install archerysec-cli
+                //    mkdir -p /tmp/archerysec-scans-report
+                  //  archerysec-cli -h http://34.170.65.15:8000 -t cHnQc3bpwLV3sMfiRAj2jLr42O_fGkyvYmt11KY7GD8Tjv5CbYWlG0Dqps49tDcq --cicd_id=032ce5e4-0d26-4a28-af1d-c53d512e644b --project=298f50a8-1e2f-4b03-beb6-392398d125b2 --zap-base-line-scan --report_path=/tmp/archerysec-scans-report/
+                 // '''
                     //sh 'archerysec-cli -h http://34.170.65.15:8000 -t cHnQc3bpwLV3sMfiRAj2jLr42O_fGkyvYmt11KY7GD8Tjv5CbYWlG0Dqps49tDcq --cicd_id=032ce5e4-0d26-4a28-af1d-c53d512e644b --project=298f50a8-1e2f-4b03-beb6-392398d125b2 --zap-base-line-scan --report_path=/tmp/archerysec-scans-report/ --verbose || true'
                     
 
-                    
+                    def zapReport = readFile 'zap_report.html'
+                    def response = httpRequest(
+                        url: 'http://34.170.65.15:8000/api/v1/import-scan/',
+                        requestBody: zapReport,
+                        httpMode: 'POST',
+                        contentType: 'text/html',
+                        customHeaders: [
+                            [name: 'Authorization', value: 'Token cHnQc3bpwLV3sMfiRAj2jLr42O_fGkyvYmt11KY7GD8Tjv5CbYWlG0Dqps49tDcq']
+                        ]
+                    )
+                    if (response.status == 201) {
+                        println 'ZAP report exported to ArcherySec successfully'
+                    } else {
+                        error "Failed to export ZAP report to ArcherySec: ${response.status} - ${response.content}"
+                    }
                     
                 
             }
