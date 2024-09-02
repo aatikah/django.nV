@@ -492,11 +492,6 @@ pipeline {
                 
                 sh '''
                         sudo chmod -R 777 /var/lib/jenkins/workspace/vul-django
-                        
-
-                        
-                        
-                        
                        
                         sudo docker run --name zap-scan-container -t zaproxy/zap-stable zap-baseline.py -t http://34.123.8.118 -j zap-report.json
                         
@@ -507,7 +502,8 @@ pipeline {
                         sleep 20
                     '''
                     sh 'cat zap-report.json || true'
-        
+
+                
                 // Export the ZAP report to DefectDojo
                 script {
                     def zapReport = readFile 'zap-report.json'
