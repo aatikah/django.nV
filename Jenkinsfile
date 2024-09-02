@@ -13,6 +13,7 @@ pipeline {
         GITLEAKS_ENGAGEMENT_ID = '5'
         BANDIT_ENGAGEMENT_ID = '6'
         ZAP_ENGAGEMENT_ID = '7'
+        NIKITO_ENGAGEMENT_ID = '8'
         DEFECT_DOJO = 'http://34.170.177.2:8080'
         ARCHERYSEC_URL = 'http://34.170.65.15:8000'
         ARCHERYSEC_PROJECT_ID = '298f50a8-1e2f-4b03-beb6-392398d125b2'
@@ -227,34 +228,34 @@ pipeline {
                 ])
 
                     // Use withCredentials to handle the API key securely
-                   // withCredentials([string(credentialsId: 'DEFECTDOJO_API_KEY', variable: 'API_KEY')]) {
-                    //def response = sh(
-                      //  script: """
-                     //   curl -X POST '${DEFECT_DOJO}/api/v2/import-scan/' \
-                     //   -H 'Authorization: Token $API_KEY' \
-                      //  -H 'accept: application/json' \
-                        //-H 'Content-Type: multipart/form-data' \
-                        //-F 'file=@bandit_report.json' \
-                       // -F 'scan_type=Bandit Scan' \
-                        //-F 'engagement=${BANDIT_ENGAGEMENT_ID}' \
-                       // -F 'product_name=django-pipeline'
-                       //     """,
-                        //    returnStdout: true
-                       // ).trim()
+                    withCredentials([string(credentialsId: 'DEFECTDOJO_API_KEY', variable: 'API_KEY')]) {
+                    def response = sh(
+                        script: """
+                        curl -X POST '${DEFECT_DOJO}/api/v2/import-scan/' \
+                        -H 'Authorization: Token $API_KEY' \
+                        -H 'accept: application/json' \
+                        -H 'Content-Type: multipart/form-data' \
+                        -F 'file=@bandit_report.json' \
+                        -F 'scan_type=Bandit Scan' \
+                        -F 'engagement=${BANDIT_ENGAGEMENT_ID}' \
+                        -F 'product_name=django-pipeline'
+                            """,
+                            returnStdout: true
+                        ).trim()
 
-                       // echo "Response from DefectDojo: ${response}"
+                        echo "Response from DefectDojo: ${response}"
 
-                        withCredentials([string(credentialsId: 'DEFECTDOJO_API_KEY', variable: 'API_KEY')]) {
-                        def curlCommand = """
-                            curl -X POST '${DEFECT_DOJO}/api/v2/import-scan/' \
-                            -H 'Authorization: Token $API_KEY' \
-                            -H 'accept: application/json' \
-                            -H 'Content-Type: multipart/form-data' \
-                            -F 'file=@bandit_report.json' \
-                            -F 'scan_type=Bandit Scan' \
-                            -F 'engagement=${BANDIT_ENGAGEMENT_ID}' \
-                            -F 'product_name=django-pipeline'
-                        """
+                       // withCredentials([string(credentialsId: 'DEFECTDOJO_API_KEY', variable: 'API_KEY')]) {
+                      //  def curlCommand = """
+                         //   curl -X POST '${DEFECT_DOJO}/api/v2/import-scan/' \
+                        //    -H 'Authorization: Token $API_KEY' \
+                          //  -H 'accept: application/json' \
+                        //    -H 'Content-Type: multipart/form-data' \
+                          //  -F 'file=@bandit_report.json' \
+                          //  -F 'scan_type=Bandit Scan' \
+                          //  -F 'engagement=${BANDIT_ENGAGEMENT_ID}' \
+                          //  -F 'product_name=django-pipeline'
+                      //  """
                         //sh curlCommand
                         //def response = sh(script: curlCommand, returnStdout: true).trim()
                         //echo "Response from DefectDojo: ${response}"
@@ -294,64 +295,34 @@ pipeline {
     }
     }
 }
-    stage('DAST With OWASP ZAP Scan') {
-            steps {
-                script {
-                    // Run ZAP in Docker if not running already
-                   // sh 'sudo docker run -d --name zap -u zap -p 8090:8080 zaproxy/zap-stable zap.sh -daemon -config api.disablekey=true -config api.addrs.addr.name=0.0.0.0 -config api.addrs.addr.port=8080'
-                   // sh 'sudo docker run -d --name zap -p 8090:8080 -v ~/zap_reports:/zap/wrk zaproxy/zap-stable zap.sh zap.sh -daemon -config api.disablekey=true -config api.addrs.addr.name=0.0.0.0 -config api.addrs.addr.port=8080'
-                    
+  //  stage('DAST With OWASP ZAP Scan') {
+           // steps {
+               // script {
+                   
 
                     // Allow ZAP to start up
-                    sleep 20
+                   // sleep 10
 
-                    // Run the ZAP baseline scan and generate a JSON report
-                    //sh '''
-                       // sudo docker exec zap zap-baseline.py -t http://34.135.208.39 -J zap_report.json
-                    //'''
-                    
                     //sh 'sudo docker run -t zaproxy/zap-stable zap-baseline.py -t http://34.135.208.39 -J zap_report.json'
                     
-                    sh '''
-                        sudo chmod -R 777 /var/lib/jenkins/workspace/vul-django
-                        sudo docker run -v /var/lib/jenkins/workspace/vul-django:/zap/wrk -t zaproxy/zap-stable zap-baseline.py -t http://34.123.8.118 -J zap_report.json || true
-                        echo "Sleeping for 20 seconds"
-                        sleep 20
-                     '''
-                    sh 'cat zap_report.json || true'
+                  // sh '''
+                       // sudo chmod -R 777 /var/lib/jenkins/workspace/vul-django
+                       // sudo docker run -v /var/lib/jenkins/workspace/vul-django:/zap/wrk -t zaproxy/zap-stable zap-baseline.py -t http://34.123.8.118 -J zap_report.json || true
+                     //   echo "Sleeping for 20 seconds"
+                   //     sleep 20
+                   //  '''
+                 //   sh 'cat zap_report.json || true'
 
-                    //sh '''
-                        //USER_ID=$(id -u)
-                       // GROUP_ID=$(id -g)
-                      //  sudo docker run --user $USER_ID:$GROUP_ID -v /var/lib/jenkins/workspace/vul-django:/zap/wrk -t zaproxy/zap-stable zap-baseline.py -t http://34.135.208.39 -J zap_report.json || true
-                      //  echo "Sleeping for 20 seconds"
-                       // sleep 20
-                    //'''
-
-
-                    // Run the ZAP baseline scan and generate a HTML report
+                    
+                   
                    // sh '''
-                       // sudo docker exec zap zap-baseline.py -t http://34.135.208.39 -J zap_report.html
-                   // '''
-
-                    //sh 'sudo docker run -t zaproxy/zap-stable zap-baseline.py -t http://34.135.208.39 -j zap_report.html'
+                     //  sudo chmod -R 777 /var/lib/jenkins/workspace/vul-django
+                      //  sudo docker run -v /var/lib/jenkins/workspace/vul-django:/zap/wrk -t zaproxy/zap-stable zap-baseline.py -t http://34.123.8.118 -r zap_report.html ||true
+                     //   echo "Sleeping for 10 seconds"
+                     //   sleep 20
+                  //  '''
+                  //  sh 'cat zap_report.html || true'
                    
-                    sh '''
-                        sudo chmod -R 777 /var/lib/jenkins/workspace/vul-django
-                        sudo docker run -v /var/lib/jenkins/workspace/vul-django:/zap/wrk -t zaproxy/zap-stable zap-baseline.py -t http://34.123.8.118 -r zap_report.html ||true
-                        echo "Sleeping for 10 seconds"
-                        sleep 20
-                    '''
-                    sh 'cat zap_report.html || true'
-                   
-
-                    //sh '''
-                      //  USER_ID=$(id -u)
-                      //  GROUP_ID=$(id -g)
-                      //  sudo docker run --user $USER_ID:$GROUP_ID -v /var/lib/jenkins/workspace/vul-django:/zap/wrk -t zaproxy/zap-stable zap-baseline.py -t http://34.132.231.218 -J zap_report.html || true
-                      //  echo "Sleeping for 10 seconds"
-                        //sleep 10
-                    //'''
 
                     // Copy the ZAP JSON report out of the Docker container
                    // sh 'sudo docker cp zap:/zap/zap_report.json ./zap_report.json'
@@ -360,17 +331,17 @@ pipeline {
                    // sh 'sudo docker cp zap:/zap/zap_report.html ./zap_report.html'
 
                     // Use the Jenkins HTML Publisher Plugin to display the report
-                        publishHTML(target: [
-                            reportDir: '.',
-                            reportFiles: 'zap_report.html',
-                            reportName: 'OWASP ZAP Report'
-                        ])
+                     //   publishHTML(target: [
+                         //   reportDir: '.',
+                         //   reportFiles: 'zap_report.html',
+                         //   reportName: 'OWASP ZAP Report'
+                       // ])
                     
                         // Securely use DefectDojo API Key within a credentials block
                     //withCredentials([string(credentialsId: 'DEFECTDOJO_API_KEY', variable: 'API_KEY')]) {
-                      //  def response = sh(
-                        //    script: """
-                          //  curl -X POST '${DEFECT_DOJO}/api/v2/import-scan/' \
+                       // def response = sh(
+                         //   script: """
+                         //   curl -X POST '${DEFECT_DOJO}/api/v2/import-scan/' \
                             //-H 'Authorization: Token $API_KEY' \
                            // -H 'accept: application/json' \
                            // -H 'Content-Type: multipart/form-data' \
@@ -384,21 +355,21 @@ pipeline {
 
                         //echo "Response from DefectDojo: ${response}"
 
-                        withCredentials([string(credentialsId: 'DEFECTDOJO_API_KEY', variable: 'API_KEY')]) {
-                        def curlCommand = """
-                            curl -X POST '${DEFECT_DOJO}/api/v2/import-scan/' \
-                            -H 'Authorization: Token $API_KEY' \
-                            -H 'accept: application/json' \
-                            -H 'Content-Type: multipart/form-data' \
-                            -F 'file=@zap_report.json' \
-                            -F 'scan_type=ZAP Scan' \
-                            -F 'engagement=${ZAP_ENGAGEMENT_ID}' \
-                            -F 'product_name=django-pipeline'
-                        """
+                      //  withCredentials([string(credentialsId: 'DEFECTDOJO_API_KEY', variable: 'API_KEY')]) {
+                      / / def curlCommand = """
+                          //  curl -X POST '${DEFECT_DOJO}/api/v2/import-scan/' \
+                         //  -H 'Authorization: Token $API_KEY' \
+                         //   -H 'accept: application/json' \
+                        //    -H 'Content-Type: multipart/form-data' \
+                          //  -F 'file=@zap_report.json' \
+                           // -F 'scan_type=ZAP Scan' \
+                          //  -F 'engagement=${ZAP_ENGAGEMENT_ID}' \
+                          //  -F 'product_name=django-pipeline'
+                        //"""
                         //sh curlCommand
                         //def response = sh(script: curlCommand, returnStdout: true).trim()
                         //echo "Response from DefectDojo: ${response}"
-                    }
+                   // }
 
                     // Send ZAP scan results to ArcherySec
                     //withCredentials([string(credentialsId: 'archerysec', variable: 'ARCHERYSEC_API_KEY')]) {
@@ -426,27 +397,63 @@ pipeline {
                     //sh 'archerysec-cli -h http://34.170.65.15:8000 -t cHnQc3bpwLV3sMfiRAj2jLr42O_fGkyvYmt11KY7GD8Tjv5CbYWlG0Dqps49tDcq --cicd_id=032ce5e4-0d26-4a28-af1d-c53d512e644b --project=298f50a8-1e2f-4b03-beb6-392398d125b2 --zap-base-line-scan --report_path=/tmp/archerysec-scans-report/ --verbose || true'
                     
 
-                    def zapReport = readFile 'zap_report.html'
-                    def response = httpRequest(
-                        url: 'http://34.170.65.15:8000/api/v1/zap-scan/',
-                        requestBody: zapReport,
-                        httpMode: 'POST',
-                        contentType: 'APPLICATION_JSON',
-                        customHeaders: [
-                            [name: 'Authorization', value: 'cHnQc3bpwLV3sMfiRAj2jLr42O_fGkyvYmt11KY7GD8Tjv5CbYWlG0Dqps49tDcq']
-                        ]
-                    )
-                    if (response.status == 201) {
-                        println 'ZAP report exported to ArcherySec successfully'
-                    } else {
-                        error "Failed to export ZAP report to ArcherySec: ${response.status} - ${response.content}"
-                    }
+                   // def zapReport = readFile 'zap_report.html'
+                  //  def response = httpRequest(
+                      //  url: 'http://34.170.65.15:8000/api/v1/zap-scan/',
+                      //  requestBody: zapReport,
+                      //  httpMode: 'POST',
+                      //  contentType: 'APPLICATION_JSON',
+                      //  customHeaders: [
+                        //    [name: 'Authorization', value: 'cHnQc3bpwLV3sMfiRAj2jLr42O_fGkyvYmt11KY7GD8Tjv5CbYWlG0Dqps49tDcq']
+                      //  ]
+                   // )
+                  //  if (response.status == 201) {
+                   //     println 'ZAP report exported to ArcherySec successfully'
+                  //  } else {
+                   //     error "Failed to export ZAP report to ArcherySec: ${response.status} - ${response.content}"
+                   // }
                     
                 
+            //}
+       // }
+        
+        stage('DAST With NIKITO Scan') {
+            steps {
+                script {
+                    // Define the target URL for the Nikto scan
+                    def targetUrl = 'http://34.123.8.118'
+
+                    // Run the Nikto scan command
+                    sh "nikto -h ${targetUrl} -o nikto_scan_results.html"
+                    sh "nikto -h ${targetUrl} -o nikto_scan_results.json"
+
+                    // Use the Jenkins HTML Publisher Plugin to display the report
+                        publishHTML(target: [
+                            reportDir: '.',
+                            reportFiles: 'nikto_scan_results.html',
+                            reportName: 'NIKITO Scan Report'
+                        ])
+
+                    // Use withCredentials to handle the API key securely
+                    withCredentials([string(credentialsId: 'DEFECTDOJO_API_KEY', variable: 'API_KEY')]) {
+                    def response = sh(
+                        script: """
+                        curl -X POST '${DEFECT_DOJO}/api/v2/import-scan/' \
+                        -H 'Authorization: Token $API_KEY' \
+                        -H 'accept: application/json' \
+                        -H 'Content-Type: multipart/form-data' \
+                        -F 'file=@nikto_scan_results.json' \
+                        -F 'scan_type=Nikito Scan' \
+                        -F 'engagement=${NIKITO_ENGAGEMENT_ID}' \
+                        -F 'product_name=django-pipeline'
+                            """,
+                            returnStdout: true
+                        ).trim()
+
+                        echo "Response from DefectDojo: ${response}"
+                }
             }
         }
-        
-        
     }
     }
 }
