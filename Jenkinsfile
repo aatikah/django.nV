@@ -467,7 +467,7 @@ pipeline {
                         -H 'accept: application/json' \
                         -H 'Content-Type: multipart/form-data' \
                         -F 'file=@nikto_scan_results.json' \
-                        -F 'scan_type=Nikito Scan' \
+                        -F 'scan_type=Nikto Scan' \
                         -F 'engagement=${NIKITO_ENGAGEMENT_ID}' \
                         -F 'product_name=django-pipeline'
                             """,
