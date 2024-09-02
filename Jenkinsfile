@@ -289,7 +289,7 @@ pipeline {
             steps {
                 sshagent(['tomcatkey']) {
                 sh '''
-                ssh -o StrictHostKeyChecking=no abuabdillah5444@34.123.8.118 "sudo docker pull aatikah/vul-djangoapp:v1 && sudo docker run -d -p 8002:8000 aatikah/vul-djangoapp:v1"
+                ssh -o StrictHostKeyChecking=no abuabdillah5444@34.123.8.118 "sudo docker pull aatikah/vul-djangoapp:v1 && sudo docker run -d -p 8003:8000 aatikah/vul-djangoapp:v1"
                 '''
     }
     }
@@ -421,7 +421,7 @@ pipeline {
                     . archerysec_env/bin/activate
                     pip install archerysec-cli
                     mkdir -p /tmp/archerysec-scans-report
-                    archerysec-cli -h http://34.170.65.15:8000 -t cHnQc3bpwLV3sMfiRAj2jLr42O_fGkyvYmt11KY7GD8Tjv5CbYWlG0Dqps49tDcq --cicd_id=032ce5e4-0d26-4a28-af1d-c53d512e644b --project=298f50a8-1e2f-4b03-beb6-392398d125b2 --zap-base-line-scan --report_path=/tmp/archerysec-scans-report/ --verbose
+                    archerysec-cli -h http://34.170.65.15:8000 -t cHnQc3bpwLV3sMfiRAj2jLr42O_fGkyvYmt11KY7GD8Tjv5CbYWlG0Dqps49tDcq --cicd_id=032ce5e4-0d26-4a28-af1d-c53d512e644b --project=298f50a8-1e2f-4b03-beb6-392398d125b2 --zap-base-line-scan --report_path=/tmp/archerysec-scans-report/
                   '''
                     //sh 'archerysec-cli -h http://34.170.65.15:8000 -t cHnQc3bpwLV3sMfiRAj2jLr42O_fGkyvYmt11KY7GD8Tjv5CbYWlG0Dqps49tDcq --cicd_id=032ce5e4-0d26-4a28-af1d-c53d512e644b --project=298f50a8-1e2f-4b03-beb6-392398d125b2 --zap-base-line-scan --report_path=/tmp/archerysec-scans-report/ --verbose || true'
                     
