@@ -356,7 +356,7 @@ pipeline {
                         //echo "Response from DefectDojo: ${response}"
 
                       //  withCredentials([string(credentialsId: 'DEFECTDOJO_API_KEY', variable: 'API_KEY')]) {
-                      / / def curlCommand = """
+                      // def curlCommand = """
                           //  curl -X POST '${DEFECT_DOJO}/api/v2/import-scan/' \
                          //  -H 'Authorization: Token $API_KEY' \
                          //   -H 'accept: application/json' \
