@@ -54,21 +54,39 @@ pipeline {
                     }
 
                 // Use withCredentials to handle the API key securely
-                    withCredentials([string(credentialsId: 'DEFECTDOJO_API_KEY', variable: 'API_KEY')]) {
-                        def curlCommand = """
-                            curl -X POST '${DEFECT_DOJO}/api/v2/import-scan/' \
-                            -H 'Authorization: Token ${API_KEY}' \
-                            -H 'accept: application/json' \
-                            -H 'Content-Type: multipart/form-data' \
-                            -F 'file=@gitleaks_report.json' \
-                            -F 'scan_type=Gitleaks Scan' \
-                            -F 'engagement=${GITLEAKS_ENGAGEMENT_ID}' \
-                            -F 'product_name=django-pipeline'
-                        """
+                   // withCredentials([string(credentialsId: 'DEFECTDOJO_API_KEY', variable: 'API_KEY')]) {
+                       // def curlCommand = """
+                          //  curl -X POST '${DEFECT_DOJO}/api/v2/import-scan/' \
+                          //  -H 'Authorization: Token ${API_KEY}' \
+                          //  -H 'accept: application/json' \
+                         //   -H 'Content-Type: multipart/form-data' \
+                         //   -F 'file=@gitleaks_report.json' \
+                          //  -F 'scan_type=Gitleaks Scan' \
+                          //  -F 'engagement=${GITLEAKS_ENGAGEMENT_ID}' \
+                         //   -F 'product_name=django-pipeline'
+                      //  """
                         //sh curlCommand
                        // def response = sh(script: curlCommand, returnStdout: true).trim()
                         //echo "Response from DefectDojo: ${response}"
-                    }
+                   // }
+
+                // Use withCredentials to handle the API key securely
+                    withCredentials([string(credentialsId: 'DEFECTDOJO_API_KEY', variable: 'API_KEY')]) {
+                    def response = sh(
+                        script: """
+                        curl -X POST '${DEFECT_DOJO}/api/v2/import-scan/' \
+                        -H 'Authorization: Token $API_KEY' \
+                        -H 'accept: application/json' \
+                        -H 'Content-Type: multipart/form-data' \
+                        -F 'file=@gitleaks_report.json' \
+                        -F 'scan_type=Gitleaks Scan' \
+                        -F 'engagement=${GITLEAKS_ENGAGEMENT_ID}' \
+                        -F 'product_name=django-pipeline'
+                            """,
+                            returnStdout: true
+                        ).trim()
+
+                        echo "Response from DefectDojo: ${response}"
                    
                 }
            }
@@ -424,8 +442,11 @@ pipeline {
                     def targetUrl = 'http://34.123.8.118'
 
                     // Run the Nikto scan command
-                    sh "nikto -h ${targetUrl} -o nikto_scan_results.html"
-                    sh "nikto -h ${targetUrl} -o nikto_scan_results.json"
+                    sh '/opt/nikto/program/nikto.pl -h ${targetUrl} -o nikto_scan_results.html || true'
+                    sh 'cat nikto_scan_results.html'
+                    
+                    sh '/opt/nikto/program/nikto.pl -h ${targetUrl} -o nikto_scan_results.json || true'
+                    sh 'cat nikto_scan_results.json'
 
                     // Use the Jenkins HTML Publisher Plugin to display the report
                         publishHTML(target: [
