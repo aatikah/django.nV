@@ -433,7 +433,7 @@ pipeline {
                         httpMode: 'POST',
                         contentType: 'APPLICATION_JSON',
                         customHeaders: [
-                            [name: 'Authorization', value: 'Token cHnQc3bpwLV3sMfiRAj2jLr42O_fGkyvYmt11KY7GD8Tjv5CbYWlG0Dqps49tDcq']
+                            [name: 'Authorization', value: 'cHnQc3bpwLV3sMfiRAj2jLr42O_fGkyvYmt11KY7GD8Tjv5CbYWlG0Dqps49tDcq']
                         ]
                     )
                     if (response.status == 201) {
