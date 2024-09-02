@@ -431,7 +431,7 @@ pipeline {
                         url: 'http://34.170.65.15:8000/api/v1/zap-scan/',
                         requestBody: zapReport,
                         httpMode: 'POST',
-                        contentType: 'APPLICATION_HTML',
+                        contentType: 'APPLICATION_JSON',
                         customHeaders: [
                             [name: 'Authorization', value: 'Token cHnQc3bpwLV3sMfiRAj2jLr42O_fGkyvYmt11KY7GD8Tjv5CbYWlG0Dqps49tDcq']
                         ]
