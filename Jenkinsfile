@@ -500,7 +500,7 @@ pipeline {
                 // Export the ZAP report to DefectDojo
                 script {
                     def zapReport = readFile 'zap-report.json'
-                    def defectdojoUrl = 'http://34.170.177.2:8080/api/v2/importscan/'
+                    def defectdojoUrl = 'http://34.170.177.2:8080/api/v2/import-scan'
                     def defectdojoApiKey = 'f830c3e36636fa2224d00c80d49ecbac37254d96'
                     def defectdojoProduct = 'django-pipeline'
         
