@@ -428,10 +428,10 @@ pipeline {
 
                     def zapReport = readFile 'zap_report.html'
                     def response = httpRequest(
-                        url: 'http://34.170.65.15:8000/api/v1/import-scan/',
+                        url: 'http://34.170.65.15:8000/api/v1/zap-scan/',
                         requestBody: zapReport,
                         httpMode: 'POST',
-                        contentType: 'APPLICATION_JSON',
+                        contentType: 'application/json',
                         customHeaders: [
                             [name: 'Authorization', value: 'Token cHnQc3bpwLV3sMfiRAj2jLr42O_fGkyvYmt11KY7GD8Tjv5CbYWlG0Dqps49tDcq']
                         ]
