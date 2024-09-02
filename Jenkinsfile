@@ -18,6 +18,7 @@ pipeline {
         ARCHERYSEC_URL = 'http://34.170.65.15:8000'
         ARCHERYSEC_PROJECT_ID = '298f50a8-1e2f-4b03-beb6-392398d125b2'
         ARCHERYSEC_USER = 'abuabdillah5444@gmail.com'
+        targetUrl = 'http://34.123.8.118'
     
     }
     //DEFECTDOJO_API_KEY = 'DEFECTDOJO_API_KEY'
@@ -439,14 +440,15 @@ pipeline {
         stage('DAST With NIKITO Scan') {
             steps {
                 script {
-                    // Define the target URL for the Nikto scan
-                    def targetUrl = 'http://34.123.8.118'
+                    
 
                     // Run the Nikto scan command
-                    sh '/home/abuabdillah5444/nikto/program/nikto.pl -h ${targetUrl} -o nikto_scan_results.html || true'
+                    //sh '/home/abuabdillah5444/nikto/program/nikto.pl -h ${targetUrl} -o nikto_scan_results.html || true'
+                    sh "/home/abuabdillah5444/nikto/program/nikto.pl -h '${targetUrl}' -o nikto_scan_results.html || true"
                     sh 'cat nikto_scan_results.html'
                     
-                    sh '/home/abuabdillah5444/nikto/program/nikto.pl -h ${targetUrl} -o nikto_scan_results.json || true'
+                   // sh '/home/abuabdillah5444/nikto/program/nikto.pl -h ${targetUrl} -o nikto_scan_results.json || true'
+                    sh "/home/abuabdillah5444/nikto/program/nikto.pl -h '${targetUrl}' -o nikto_scan_results.json || true"
                     sh 'cat nikto_scan_results.json'
 
                     // Use the Jenkins HTML Publisher Plugin to display the report
