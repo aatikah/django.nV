@@ -489,15 +489,15 @@ pipeline {
                    
                     sh '''
                        sudo chmod -R 777 /var/lib/jenkins/workspace/vul-django
-                        sudo docker run -v /var/lib/jenkins/workspace/vul-django:/zap/wrk -t zaproxy/zap-stable zap-baseline.py -t http://34.123.8.118 -r zap-report.html ||true
+                        sudo docker run -v /var/lib/jenkins/workspace/vul-django:/zap/wrk -t zaproxy/zap-stable zap-baseline.py -t http://34.123.8.118 -j zap-report.json ||true
                        echo "Sleeping for 10 seconds"
                         sleep 20
                     '''
-                    sh 'cat zap_report.html || true'
+                    sh 'cat zap_report.json || true'
         
                 // Export the ZAP report to DefectDojo
                 script {
-                    def zapReport = readFile 'zap-report.html'
+                    def zapReport = readFile 'zap-report.json'
                     def defectdojoUrl = 'http://34.170.177.2:8080/api/v2/importscan/'
                     def defectdojoApiKey = 'f830c3e36636fa2224d00c80d49ecbac37254d96'
                     def defectdojoProduct = 'django-pipeline'
