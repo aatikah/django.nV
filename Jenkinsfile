@@ -13,8 +13,8 @@ pipeline {
         GITLEAKS_ENGAGEMENT_ID = '5'
         BANDIT_ENGAGEMENT_ID = '6'
         ZAP_ENGAGEMENT_ID = '7'
-        DEFECT_DOJO = 'http://35.188.135.165:8080'
-        ARCHERYSEC_URL = 'http://34.72.237.173:8000'
+        DEFECT_DOJO = 'http://34.170.177.2:8080'
+        ARCHERYSEC_URL = 'http://34.170.65.15:8000'
         ARCHERYSEC_PROJECT_ID = '298f50a8-1e2f-4b03-beb6-392398d125b2'
         ARCHERYSEC_USER = 'abuabdillah5444@gmail.com'
     
@@ -289,7 +289,7 @@ pipeline {
             steps {
                 sshagent(['tomcatkey']) {
                 sh '''
-                ssh -o StrictHostKeyChecking=no abuabdillah5444@34.132.231.218 "sudo docker pull aatikah/vul-djangoapp:v1 && sudo docker run -d -p 8000:8000 aatikah/vul-djangoapp:v1"
+                ssh -o StrictHostKeyChecking=no abuabdillah5444@34.123.8.118 "sudo docker pull aatikah/vul-djangoapp:v1 && sudo docker run -d -p 8000:8000 aatikah/vul-djangoapp:v1"
                 '''
     }
     }
@@ -314,7 +314,7 @@ pipeline {
                     
                     sh '''
                         sudo chmod -R 777 /var/lib/jenkins/workspace/vul-django
-                        sudo docker run -v /var/lib/jenkins/workspace/vul-django:/zap/wrk -t zaproxy/zap-stable zap-baseline.py -t http://34.132.231.218 -J zap_report.json || true
+                        sudo docker run -v /var/lib/jenkins/workspace/vul-django:/zap/wrk -t zaproxy/zap-stable zap-baseline.py -t http://34.123.8.118 -J zap_report.json || true
                         echo "Sleeping for 20 seconds"
                         sleep 20
                      '''
@@ -338,7 +338,7 @@ pipeline {
                    
                     sh '''
                         sudo chmod -R 777 /var/lib/jenkins/workspace/vul-django
-                        sudo docker run -v /var/lib/jenkins/workspace/vul-django:/zap/wrk -t zaproxy/zap-stable zap-baseline.py -t http://34.132.231.218 -J zap_report.html ||true
+                        sudo docker run -v /var/lib/jenkins/workspace/vul-django:/zap/wrk -t zaproxy/zap-stable zap-baseline.py -t http://34.123.8.118 -J zap_report.html ||true
                         echo "Sleeping for 10 seconds"
                         sleep 20
                     '''
@@ -421,9 +421,9 @@ pipeline {
                     . archerysec_env/bin/activate
                     pip install archerysec-cli
                     mkdir -p /tmp/archerysec-scans-report
-                  //  archerysec-cli -h http://34.72.237.173:8000 -t cHnQc3bpwLV3sMfiRAj2jLr42O_fGkyvYmt11KY7GD8Tjv5CbYWlG0Dqps49tDcq --cicd_id=032ce5e4-0d26-4a28-af1d-c53d512e644b --project=298f50a8-1e2f-4b03-beb6-392398d125b2 --zap-base-line-scan --report_path=/tmp/archerysec-scans-report/ --verbose
+                  //  archerysec-cli -h http://34.170.65.15:8000 -t cHnQc3bpwLV3sMfiRAj2jLr42O_fGkyvYmt11KY7GD8Tjv5CbYWlG0Dqps49tDcq --cicd_id=032ce5e4-0d26-4a28-af1d-c53d512e644b --project=298f50a8-1e2f-4b03-beb6-392398d125b2 --zap-base-line-scan --report_path=/tmp/archerysec-scans-report/ --verbose
                   '''
-                    sh 'archerysec-cli -h http://34.72.237.173:8000 -t cHnQc3bpwLV3sMfiRAj2jLr42O_fGkyvYmt11KY7GD8Tjv5CbYWlG0Dqps49tDcq --cicd_id=032ce5e4-0d26-4a28-af1d-c53d512e644b --project=298f50a8-1e2f-4b03-beb6-392398d125b2 --zap-base-line-scan --report_path=/tmp/archerysec-scans-report/ --verbose || true'
+                    sh 'archerysec-cli -h http://34.170.65.15:8000 -t cHnQc3bpwLV3sMfiRAj2jLr42O_fGkyvYmt11KY7GD8Tjv5CbYWlG0Dqps49tDcq --cicd_id=032ce5e4-0d26-4a28-af1d-c53d512e644b --project=298f50a8-1e2f-4b03-beb6-392398d125b2 --zap-base-line-scan --report_path=/tmp/archerysec-scans-report/ --verbose || true'
                     
 
                     
