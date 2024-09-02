@@ -490,7 +490,7 @@ pipeline {
                     sh '''
                        sudo chmod -R 777 /var/lib/jenkins/workspace/vul-django
                         sudo docker run -v /var/lib/jenkins/workspace/vul-django:/zap/wrk -t zaproxy/zap-stable zap-baseline.py -t http://34.123.8.118 -r zap-report.html ||true
-                     /  echo "Sleeping for 10 seconds"
+                       echo "Sleeping for 10 seconds"
                         sleep 20
                     '''
                     sh 'cat zap_report.html || true'
