@@ -14,11 +14,11 @@ pipeline {
         BANDIT_ENGAGEMENT_ID = '6'
         ZAP_ENGAGEMENT_ID = '7'
         NIKITO_ENGAGEMENT_ID = '8'
-        DEFECT_DOJO = 'http://34.170.177.2:8080'
+        DEFECT_DOJO = 'http://35.202.94.206:8080'
         ARCHERYSEC_URL = 'http://34.170.65.15:8000'
         ARCHERYSEC_PROJECT_ID = '298f50a8-1e2f-4b03-beb6-392398d125b2'
         ARCHERYSEC_USER = 'abuabdillah5444@gmail.com'
-        targetUrl = 'http://34.123.8.118'
+        targetUrl = 'http://35.239.75.197'
     
     }
     //DEFECTDOJO_API_KEY = 'DEFECTDOJO_API_KEY'
@@ -310,7 +310,7 @@ pipeline {
             steps {
                 sshagent(['tomcatkey']) {
                 sh '''
-                ssh -o StrictHostKeyChecking=no abuabdillah5444@34.123.8.118 "sudo docker pull aatikah/vul-djangoapp:v1 && sudo docker run -d -p 8000:8000 aatikah/vul-djangoapp:v1"
+                ssh -o StrictHostKeyChecking=no abuabdillah5444@35.239.75.197 "sudo docker pull aatikah/vul-djangoapp:v1 && sudo docker run -d -p 8000:8000 aatikah/vul-djangoapp:v1"
                 '''
     }
     }
@@ -488,14 +488,14 @@ pipeline {
 
                    //sudo docker run -v /var/lib/jenkins/workspace/vul-django:/zap/wrk -t zaproxy/zap-stable zap-baseline.py -t http://34.123.8.118 -j zap-report.json ||true
                         //sudo docker run --rm -v /var/lib/jenkins/workspace/vul-django:/zap/wrk -t zaproxy/zap-stable zap.sh -cmd -quickurl http://34.123.8.118 -quickout /zap/wrk/zap-report.json
-                    sh 'rm -f zap-report.json'
+                    sh 'rm -f zap-report.json || true'
+                    sh 'rm -f zap-report.html || true'
                 
-                sh '''
+                    sh '''
                         sudo chmod -R 777 /var/lib/jenkins/workspace/vul-django
                        
-                        sudo docker run --name zap-scan-container -t zaproxy/zap-stable zap-baseline.py -t http://34.123.8.118 -j zap-report.json
+                        sudo docker run --name zap-scan-container -t zaproxy/zap-stable zap-baseline.py -t http://35.239.75.197 -j zap-report.json
                         
-                       
                         sudo docker cp zap-scan-container:/zap/zap-report.json /var/lib/jenkins/workspace/vul-django/zap-report.json
 
                         echo "Sleeping for 20 seconds"
@@ -503,11 +503,31 @@ pipeline {
                     '''
                     sh 'cat zap-report.json || true'
 
+                    sh '''
+                        sudo chmod -R 777 /var/lib/jenkins/workspace/vul-django
+                       
+                        sudo docker run --name zap-scan-container -t zaproxy/zap-stable zap-baseline.py -t http://35.239.75.197 -r zap-report.html
+                        
+                        sudo docker cp zap-scan-container:/zap/zap-report.html /var/lib/jenkins/workspace/vul-django/zap-report.html
+
+                        echo "Sleeping for 20 seconds"
+                        sleep 20
+                    '''
+                    sh 'cat zap-report.json || true'
+                    sh 'cat zap-report.html || true'
+
+                // Use the Jenkins HTML Publisher Plugin to display the report
+                        publishHTML(target: [
+                            reportDir: '.',
+                            reportFiles: 'zap-report.html',
+                            reportName: 'ZAP Scan Report'
+                        ])
+
                 
                 // Export the ZAP report to DefectDojo
                 script {
                     def zapReport = readFile 'zap-report.json'
-                    def defectdojoUrl = 'http://34.170.177.2:8080/api/v2/import-scan'
+                    def defectdojoUrl = 'http://35.202.94.206:8080/api/v2/import-scan'
                     def defectdojoApiKey = 'f830c3e36636fa2224d00c80d49ecbac37254d96'
                     def defectdojoProduct = 'django-pipeline'
         
