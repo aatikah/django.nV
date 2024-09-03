@@ -502,8 +502,7 @@ pipeline {
                         
                         sudo docker cp zap-scan-container:/zap/zap-report.json /var/lib/jenkins/workspace/vul-django/zap-report.json
 
-                        echo "Sleeping for 20 seconds"
-                        sleep 20
+                        
                     '''
                     sh 'cat zap-report.json || true'
 
@@ -514,8 +513,7 @@ pipeline {
                         
                         sudo docker cp zap-scan-container:/zap/zap-report.html /var/lib/jenkins/workspace/vul-django/zap-report.html
 
-                        echo "Sleeping for 20 seconds"
-                        sleep 20
+                        
                     '''
                     sh 'cat zap-report.json || true'
                     sh 'cat zap-report.html || true'
