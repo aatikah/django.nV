@@ -455,7 +455,9 @@ pipeline {
                         publishHTML(target: [
                             reportDir: '.',
                             reportFiles: 'nikto_scan_results.html',
-                            reportName: 'NIKITO Scan Report'
+                            reportName: 'NIKITO Scan Report',
+                            keepAll: true,
+                            alwaysLinkToLastBuild: true
                         ])
 
                     // Use withCredentials to handle the API key securely
@@ -520,7 +522,9 @@ pipeline {
                         publishHTML(target: [
                             reportDir: '.',
                             reportFiles: 'zap-report.html',
-                            reportName: 'ZAP Scan Report'
+                            reportName: 'ZAP Scan Report',
+                            keepAll: true,
+                            alwaysLinkToLastBuild: true
                         ])
 
                 
