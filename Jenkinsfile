@@ -494,7 +494,7 @@ pipeline {
         '''
         
         // Wait for ZAP to start
-        sh 'sleep 60'
+        sh 'sleep 70'
         
         // Perform the scan using ZAP API on the new port (8090)
         sh '''
