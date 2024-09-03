@@ -482,39 +482,36 @@ pipeline {
         }
     }
 
-        stage('OWASP ZAP Scan') {
+      stage('OWASP ZAP Scan') {
             steps {
                 // Run OWASP ZAP scan on the target URL
-                // Allow ZAP to start up
-                   // sleep 10
+               
 
-                   //sudo docker run -v /var/lib/jenkins/workspace/vul-django:/zap/wrk -t zaproxy/zap-stable zap-baseline.py -t http://34.123.8.118 -j zap-report.json ||true
-                        //sudo docker run --rm -v /var/lib/jenkins/workspace/vul-django:/zap/wrk -t zaproxy/zap-stable zap.sh -cmd -quickurl http://34.123.8.118 -quickout /zap/wrk/zap-report.json
                    
-                    script {
                     sh 'rm -f zap-report.json || true'
                     sh 'rm -f zap-report.html || true'
                 
                     sh '''
                         sudo chmod -R 777 /var/lib/jenkins/workspace/vul-django
                        
-                        sudo docker run --name zap-scan-container -d zaproxy/zap-stable zap-baseline.py -t http://35.239.75.197 -j zap-report.json || true
+                        sudo docker run --name zap-scan-container -t zaproxy/zap-stable -p 8090:8080 zap-baseline.py -t http://35.239.75.197 -j zap-report.json
                         
                         sudo docker cp zap-scan-container:/zap/zap-report.json /var/lib/jenkins/workspace/vul-django/zap-report.json
 
-                        
+                        echo "Sleeping for 20 seconds"
+                        sleep 20
                     '''
                     sh 'cat zap-report.json || true'
 
                     sh '''
                         sudo chmod -R 777 /var/lib/jenkins/workspace/vul-django
                        
-                        sudo docker run --name zap-scan-container -d zaproxy/zap-stable zap-baseline.py -t http://35.239.75.197 -r zap-report.html || true
+                        sudo docker run --name zap-scan-container -t zaproxy/zap-stable -p 8090:8080 zap-baseline.py -t http://35.239.75.197 -r zap-report.html
                         
-
                         sudo docker cp zap-scan-container:/zap/zap-report.html /var/lib/jenkins/workspace/vul-django/zap-report.html
 
-                        
+                        echo "Sleeping for 20 seconds"
+                        sleep 20
                     '''
                     sh 'cat zap-report.json || true'
                     sh 'cat zap-report.html || true'
@@ -530,7 +527,7 @@ pipeline {
 
                 
                 // Export the ZAP report to DefectDojo
-                
+                script {
                     def zapReport = readFile 'zap-report.json'
                     def defectdojoUrl = 'http://35.202.94.206:8080/api/v2/import-scan'
                     def defectdojoApiKey = 'f830c3e36636fa2224d00c80d49ecbac37254d96'
@@ -554,6 +551,7 @@ pipeline {
                 }
             }
 }
+
     
     }
 
