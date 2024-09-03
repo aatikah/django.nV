@@ -490,6 +490,8 @@ pipeline {
 
                    //sudo docker run -v /var/lib/jenkins/workspace/vul-django:/zap/wrk -t zaproxy/zap-stable zap-baseline.py -t http://34.123.8.118 -j zap-report.json ||true
                         //sudo docker run --rm -v /var/lib/jenkins/workspace/vul-django:/zap/wrk -t zaproxy/zap-stable zap.sh -cmd -quickurl http://34.123.8.118 -quickout /zap/wrk/zap-report.json
+                   
+                    script {
                     sh 'rm -f zap-report.json || true'
                     sh 'rm -f zap-report.html || true'
                 
@@ -529,7 +531,7 @@ pipeline {
 
                 
                 // Export the ZAP report to DefectDojo
-                script {
+                
                     def zapReport = readFile 'zap-report.json'
                     def defectdojoUrl = 'http://35.202.94.206:8080/api/v2/import-scan'
                     def defectdojoApiKey = 'f830c3e36636fa2224d00c80d49ecbac37254d96'
