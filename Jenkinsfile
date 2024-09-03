@@ -498,7 +498,7 @@ pipeline {
                     sh '''
                         sudo chmod -R 777 /var/lib/jenkins/workspace/vul-django
                        
-                        sudo docker run --name zap-scan-container -t zaproxy/zap-stable zap-baseline.py -t http://35.239.75.197 -j zap-report.json || true
+                        sudo docker run --name zap-scan-container -d zaproxy/zap-stable zap-baseline.py -t http://35.239.75.197 -j zap-report.json || true
                         
                         sudo docker cp zap-scan-container:/zap/zap-report.json /var/lib/jenkins/workspace/vul-django/zap-report.json
 
@@ -509,8 +509,9 @@ pipeline {
                     sh '''
                         sudo chmod -R 777 /var/lib/jenkins/workspace/vul-django
                        
-                        sudo docker run --name zap-scan-container -t zaproxy/zap-stable zap-baseline.py -t http://35.239.75.197 -r zap-report.html || true
+                        sudo docker run --name zap-scan-container -d zaproxy/zap-stable zap-baseline.py -t http://35.239.75.197 -r zap-report.html || true
                         
+
                         sudo docker cp zap-scan-container:/zap/zap-report.html /var/lib/jenkins/workspace/vul-django/zap-report.html
 
                         
