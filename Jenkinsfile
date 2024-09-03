@@ -488,9 +488,6 @@ pipeline {
                 // Allow ZAP to start up
                    // sleep 10
 
-                // Generate a unique container name using the Jenkins build number
-                def containerName = "zap-scan-container-${env.BUILD_NUMBER}"
-
                    //sudo docker run -v /var/lib/jenkins/workspace/vul-django:/zap/wrk -t zaproxy/zap-stable zap-baseline.py -t http://34.123.8.118 -j zap-report.json ||true
                         //sudo docker run --rm -v /var/lib/jenkins/workspace/vul-django:/zap/wrk -t zaproxy/zap-stable zap.sh -cmd -quickurl http://34.123.8.118 -quickout /zap/wrk/zap-report.json
                     sh 'rm -f zap-report.json || true'
@@ -499,22 +496,24 @@ pipeline {
                     sh '''
                         sudo chmod -R 777 /var/lib/jenkins/workspace/vul-django
                        
-                        sudo docker run --name ${containerName} -t zaproxy/zap-stable zap-baseline.py -t http://35.239.75.197 -j zap-report.json || true
+                        sudo docker run --name zap-scan-container -t zaproxy/zap-stable zap-baseline.py -t http://35.239.75.197 -j zap-report.json || true
                         
-                        sudo docker cp ${containerName}:/zap/zap-report.json /var/lib/jenkins/workspace/vul-django/zap-report.json
+                        sudo docker cp zap-scan-container:/zap/zap-report.json /var/lib/jenkins/workspace/vul-django/zap-report.json
 
-                        
+                        echo "Sleeping for 20 seconds"
+                        sleep 20
                     '''
                     sh 'cat zap-report.json || true'
 
                     sh '''
                         sudo chmod -R 777 /var/lib/jenkins/workspace/vul-django
                        
-                        sudo docker run --name ${containerName} -t zaproxy/zap-stable zap-baseline.py -t http://35.239.75.197 -r zap-report.html || true
+                        sudo docker run --name zap-scan-container -t zaproxy/zap-stable zap-baseline.py -t http://35.239.75.197 -r zap-report.html || true
                         
-                        sudo docker cp ${containerName}:/zap/zap-report.html /var/lib/jenkins/workspace/vul-django/zap-report.html
+                        sudo docker cp zap-scan-container:/zap/zap-report.html /var/lib/jenkins/workspace/vul-django/zap-report.html
 
-                       
+                        echo "Sleeping for 20 seconds"
+                        sleep 20
                     '''
                     sh 'cat zap-report.json || true'
                     sh 'cat zap-report.html || true'
