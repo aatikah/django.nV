@@ -310,7 +310,7 @@ pipeline {
             steps {
                 sshagent(['tomcatkey']) {
                 sh '''
-                ssh -o StrictHostKeyChecking=no abuabdillah5444@35.225.219.50 "sudo docker pull aatikah/vul-djangoapp:v1 && sudo docker run -d -p 8000:8000 aatikah/vul-djangoapp:v1"
+                ssh -v -o StrictHostKeyChecking=no abuabdillah5444@35.225.219.50 "sudo docker pull aatikah/vul-djangoapp:v1 && sudo docker run -d -p 8000:8000 aatikah/vul-djangoapp:v1"
                 '''
     }
     }
@@ -485,7 +485,7 @@ pipeline {
       stage ('DAST') {
       steps {
         sshagent(['ZAPKEY']) {
-         sh 'ssh -v -o  StrictHostKeyChecking=no abuabdillah5444@34.44.18.208 "docker run -t owasp/zap2docker-stable zap-baseline.py -t http://35.225.219.50/" || true'
+         sh 'ssh -v -o  StrictHostKeyChecking=no abuabdillah5444@34.44.18.208 "sudo docker run -t owasp/zap2docker-stable zap-baseline.py -t http://35.225.219.50/" || true'
         }
       }
     }
