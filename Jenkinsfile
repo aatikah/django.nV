@@ -486,62 +486,44 @@ pipeline {
       steps {
         sshagent(['ZAPKEY']) {
         // sh 'ssh -v -o  StrictHostKeyChecking=no abuabdillah5444@34.44.18.208 "sudo docker run -t zaproxy/zap-stable zap-baseline.py -t http://35.225.219.50/" || true'
-            // Remove old reports if they exist
-            sh 'rm -f zap-report.json || true'
-            sh 'rm -f zap-report.html || true'
-    
-            // Run ZAP in daemon mode on a different port (8080)
-            sh '''
-               ssh -v -o  StrictHostKeyChecking=no abuabdillah5444@34.44.18.208 "sudo docker run --name zap-scan-container -d -p 8080:8080 zaproxy/zap-stable zap.sh -daemon -port 8080"
-            '''
+                sh 'rm -f zap-report.json || true'
+                sh 'rm -f zap-report.html || true'
             
-            // Wait for ZAP to start
-            sh 'sleep 70'
-            
-            // Perform the scan using ZAP API on the new port (8080)
-            sh '''
-                # Perform the scan
-                curl "http://34.44.18.208:8080/JSON/ascan/action/scan/?url=http://35.225.219.50&recurse=true&inScopeOnly=true"
-    
-                # Wait for the scan to complete
-                sleep 60
-    
-                # Retrieve the scan results in JSON format
-                curl -o zap-report.json "http://34.44.18.208:8080/JSON/core/view/alerts/?baseurl=http://35.225.219.50&count=1000"
-                
-                # Retrieve the scan results in HTML format
-                curl -o zap-report.html "http://34.44.18.208:8080/OTHER/core/other/htmlreport/"
-            '''
-    
-            // Copy reports from container to Jenkins workspace
-            sh '''
-                sudo docker cp zap-scan-container:/zap/zap-report.json /var/lib/jenkins/workspace/vul-django/zap-report.json
-                sudo docker cp zap-scan-container:/zap/zap-report.html /var/lib/jenkins/workspace/vul-django/zap-report.html
-            '''
-    
-            // Ensure ZAP container is still running or clean up
-            sh '''
-                # Optionally check if the container is still running
-                sudo docker ps -a | grep zap-scan-container
-    
-                # Optionally stop and remove the container if not needed
-                sudo docker stop zap-scan-container || true
-                sudo docker rm zap-scan-container || true
-            '''
-    
-            // Display the ZAP reports
-            sh 'cat zap-report.json || true'
-            sh 'cat zap-report.html || true'
-    
+                sh '''
+                    sudo chmod -R 777 /var/lib/jenkins/workspace/vul-django
+                   
+                    sudo docker run --name zap-scan-container -t zaproxy/zap-stable zap-baseline.py -t http://35.225.219.50 -j zap-report.json
+                    
+                    sudo docker cp zap-scan-container:/zap/zap-report.json /var/lib/jenkins/workspace/vul-django/zap-report.json
+
+                    echo "Sleeping for 20 seconds"
+                    sleep 20
+                '''
+                sh 'cat zap-report.json || true'
+
+                sh '''
+                    sudo chmod -R 777 /var/lib/jenkins/workspace/vul-django
+                   
+                    sudo docker run --name zap-scan-container -t zaproxy/zap-stable zap-baseline.py -t http://35.225.219.50 -r zap-report.html
+                    
+                    sudo docker cp zap-scan-container:/zap/zap-report.html /var/lib/jenkins/workspace/vul-django/zap-report.html
+
+                    echo "Sleeping for 20 seconds"
+                    sleep 20
+                '''
+                sh 'cat zap-report.json || true'
+                sh 'cat zap-report.html || true'
+
             // Use the Jenkins HTML Publisher Plugin to display the report
-            publishHTML(target: [
-                reportDir: '.',
-                reportFiles: 'zap-report.html',
-                reportName: 'ZAP Scan Report',
-                keepAll: true,
-                alwaysLinkToLastBuild: true
-            ])
-    
+                    publishHTML(target: [
+                        reportDir: '.',
+                        reportFiles: 'zap-report.html',
+                        reportName: 'ZAP Scan Report',
+                        keepAll: true,
+                        alwaysLinkToLastBuild: true
+                    ])
+
+            
             // Export the ZAP report to DefectDojo
             script {
                 def zapReport = readFile 'zap-report.json'
