@@ -483,54 +483,40 @@ pipeline {
     }
 
       stage ('DAST') {
-      steps {
+    steps {
         sshagent(['ZAPKEY']) {
-        // sh 'ssh -v -o  StrictHostKeyChecking=no abuabdillah5444@34.44.18.208 "sudo docker run -t zaproxy/zap-stable zap-baseline.py -t http://35.225.219.50/" || true'
-                sh 'rm -f zap-report.json || true'
-                sh 'rm -f zap-report.html || true'
+            sh 'ssh -o StrictHostKeyChecking=no abuabdillah5444@34.44.18.208 "sudo docker rm -f zap-scan-container || true"'
             
-                sh '''
-                    sudo chmod -R 777 /var/lib/jenkins/workspace/vul-django
-                   
-                    sudo docker run --name zap-scan-container -t zaproxy/zap-stable zap-baseline.py -t http://35.225.219.50 -j zap-report.json
-                    
-                    sudo docker cp zap-scan-container:/zap/zap-report.json /var/lib/jenkins/workspace/vul-django/zap-report.json
-
-                    echo "Sleeping for 20 seconds"
-                    sleep 20
-                '''
-                sh 'cat zap-report.json || true'
-
-                sh '''
-                    sudo chmod -R 777 /var/lib/jenkins/workspace/vul-django
-                   
-                    sudo docker run --name zap-scan-container -t zaproxy/zap-stable zap-baseline.py -t http://35.225.219.50 -r zap-report.html
-                    
-                    sudo docker cp zap-scan-container:/zap/zap-report.html /var/lib/jenkins/workspace/vul-django/zap-report.html
-
-                    echo "Sleeping for 20 seconds"
-                    sleep 20
-                '''
-                sh 'cat zap-report.json || true'
-                sh 'cat zap-report.html || true'
-
-            // Use the Jenkins HTML Publisher Plugin to display the report
-                    publishHTML(target: [
-                        reportDir: '.',
-                        reportFiles: 'zap-report.html',
-                        reportName: 'ZAP Scan Report',
-                        keepAll: true,
-                        alwaysLinkToLastBuild: true
-                    ])
-
+            sh 'ssh -o StrictHostKeyChecking=no abuabdillah5444@34.44.18.208 "sudo docker run --name zap-scan-container -t zaproxy/zap-stable zap-baseline.py -t http://35.225.219.50 -j zap-report.json"'
             
-            // Export the ZAP report to DefectDojo
+            sh 'ssh -o StrictHostKeyChecking=no abuabdillah5444@34.44.18.208 "sudo docker cp zap-scan-container:/zap/zap-report.json /home/abuabdillah5444/zap-report.json"'
+            
+            sh 'scp -o StrictHostKeyChecking=no abuabdillah5444@34.44.18.208:/home/abuabdillah5444/zap-report.json /var/lib/jenkins/workspace/vul-django/zap-report.json'
+            
+            sh 'cat zap-report.json || true'
+            
+            sh 'ssh -o StrictHostKeyChecking=no abuabdillah5444@34.44.18.208 "sudo docker run --name zap-scan-container -t zaproxy/zap-stable zap-baseline.py -t http://35.225.219.50 -r zap-report.html"'
+            
+            sh 'ssh -o StrictHostKeyChecking=no abuabdillah5444@34.44.18.208 "sudo docker cp zap-scan-container:/zap/zap-report.html /home/abuabdillah5444/zap-report.html"'
+            
+            sh 'scp -o StrictHostKeyChecking=no abuabdillah5444@34.44.18.208:/home/abuabdillah5444/zap-report.html /var/lib/jenkins/workspace/vul-django/zap-report.html'
+            
+            sh 'cat zap-report.html || true'
+
+            publishHTML(target: [
+                reportDir: '.',
+                reportFiles: 'zap-report.html',
+                reportName: 'ZAP Scan Report',
+                keepAll: true,
+                alwaysLinkToLastBuild: true
+            ])
+
             script {
                 def zapReport = readFile 'zap-report.json'
                 def defectdojoUrl = 'http://34.71.158.255:8080/api/v2/import-scan'
                 def defectdojoApiKey = 'f830c3e36636fa2224d00c80d49ecbac37254d96'
                 def defectdojoProduct = 'django-pipeline'
-    
+
                 def response = httpRequest(
                     url: defectdojoUrl,
                     requestBody: zapReport,
@@ -540,17 +526,16 @@ pipeline {
                         [name: 'product', value: defectdojoProduct]
                     ]
                 )
-    
+
                 if (response.status == 201) {
                     println 'ZAP report exported to DefectDojo successfully'
                 } else {
                     error "Failed to export ZAP report to DefectDojo: ${response.status} - ${response.content}"
                 }
             }
-      }
+        }
     }
+}
 
-    
-    }
     }
 }
