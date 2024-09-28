@@ -42,6 +42,7 @@ stages{
                     def gitleaksStatus = sh(script: 'docker run --rm -v /var/lib/jenkins/workspace/vul-django:/repo zricethezav/gitleaks detect --source /repo --report-path /repo/gitleaks_report.json --report-format json', returnStatus: true)
                     
                    //  Display the Gitleaks report
+                    sh 'sleep 20'
                     sh 'cat gitleaks_report.json'
                     
                    //  Handle the Gitleaks exit code
