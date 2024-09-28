@@ -1,5 +1,7 @@
 pipeline {
-    agent any 
+    agent {
+        label 'slave-jenkins-deb'  // Replace with the label of your slave node
+    }
    tools{
        maven 'Maven'
    }
