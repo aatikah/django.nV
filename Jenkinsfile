@@ -28,12 +28,18 @@ stages{
                }
             }
             }
+    stage('Prepare Repository') {
+    steps {
+        git url: 'https://github.com/aatikah/django.nV.git'
+    }
+}
+    
     stage('Check Git Secrets With Gitleaks With Error Continue') {
             steps {
                 script {
 
                     // Clone the repository
-                    checkout scm
+                   // checkout scm
                     
                     //Remove any existing report file
                     sh 'rm -f gitleaks_report.json'
