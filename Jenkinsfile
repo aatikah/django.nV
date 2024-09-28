@@ -31,6 +31,9 @@ stages{
     stage('Check Git Secrets With Gitleaks With Error Continue') {
             steps {
                 script {
+
+                    // Clone the repository
+                    checkout scm
                     
                     //Remove any existing report file
                     sh 'rm -f gitleaks_report.json'
