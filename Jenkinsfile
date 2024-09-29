@@ -19,8 +19,9 @@ stages{
   stage('Run Gitleaks') {
     steps {
         script {
-            def gitleaksImage = 'zricethezav/gitleaks:v8.15.2'  // Specify a known working version
-            def repoPath = '/scan'  // Mount point inside the container
+            def gitleaksImage = 'zricethezav/gitleaks:v8.15.2'
+            def repoPath = '/scan'
+            def reportPath = "${WORKSPACE}/gitleaks-report.json"
             
             // Pull the specified gitleaks image
             sh "docker pull ${gitleaksImage}"
@@ -37,26 +38,26 @@ stages{
             """
             
             // Run gitleaks and capture output
-            def gitleaksOutput = sh(script: gitleaksCommand, returnStdout: true, returnStatus: true)
+            def (exitCode, output) = sh(script: gitleaksCommand, returnStdout: true, returnStatus: true).tokenize('\n')
             
-            echo "Gitleaks command exit code: ${gitleaksOutput[0]}"
-            echo "Gitleaks output: ${gitleaksOutput[1]}"
+            echo "Gitleaks command exit code: ${exitCode}"
+            echo "Gitleaks output: ${output}"
             
             // Check if the report file exists
-            def reportExists = fileExists 'gitleaks-report.json'
+            def reportExists = fileExists reportPath
             
             if (reportExists) {
                 echo "Gitleaks report found. Archiving..."
                 archiveArtifacts artifacts: 'gitleaks-report.json', allowEmptyArchive: false
                 
                 // Read and log the content of the report
-                def reportContent = readFile 'gitleaks-report.json'
+                def reportContent = readFile reportPath
                 echo "Report content: ${reportContent}"
                 
-                if (gitleaksOutput[0] == 1) {
+                if (exitCode == '1') {
                     echo "Gitleaks found potential secrets. Check the report for details."
-                } else if (gitleaksOutput[0] != 0) {
-                    error "Gitleaks scan failed with exit code ${gitleaksOutput[0]}"
+                } else if (exitCode != '0') {
+                    error "Gitleaks scan failed with exit code ${exitCode}"
                 }
             } else {
                 echo "Gitleaks report not found. Check the output for errors."
