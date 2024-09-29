@@ -19,11 +19,11 @@ stages{
     
  
     
-    stage('Run Gitleaks') {
+   stage('Run Gitleaks') {
     steps {
         script {
             def gitleaksImage = 'zricethezav/gitleaks:latest'
-            def repoPath = '.'  // Assumes Jenkins is in the root of your repo
+            def repoPath = '/scan'  // Mount point inside the container
             
             // Pull the latest gitleaks image
             sh "docker pull ${gitleaksImage}"
@@ -33,7 +33,7 @@ stages{
                 docker run --rm -v ${WORKSPACE}:${repoPath} \
                 ${gitleaksImage} detect \
                 --source=${repoPath} \
-                --report-path=${WORKSPACE}/gitleaks-report.json \
+                --report-path=${repoPath}/gitleaks-report.json \
                 --report-format=json
             """
             
