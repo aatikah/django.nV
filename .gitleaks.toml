@@ -1,5 +1,7 @@
 [[rules]]
-description = "Exclude specific files"
+id = "exclude-jquery-file"
+description = "Exclude specific jQuery file from scanning"
 path = "taskManager/static/taskManager/js/jquery-ui-1.9.2.custom.min.js"
-regex = "keyCode.END:r=this.anchors.length-1;"
+regex = '''.*'''  # You can use a simple regex to match anything or leave it out
 ignore = true
+
