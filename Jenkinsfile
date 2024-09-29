@@ -34,17 +34,24 @@ stages{
                 ${gitleaksImage} detect \
                 --source=${repoPath} \
                 --report-path=${repoPath}/gitleaks-report.json \
-                --report-format=json
+                --report-format=json \
+                --no-git \
+                --verbose
             """
             
-            def gitleaksResult = sh(script: gitleaksCommand, returnStatus: true)
+            // Run gitleaks and capture output
+            def gitleaksOutput = sh(script: gitleaksCommand, returnStdout: true)
+            echo "Gitleaks output: ${gitleaksOutput}"
             
-            // Check the exit code
-            if (gitleaksResult == 1) {
-                echo "Gitleaks found potential secrets. Check the report for details."
-                archiveArtifacts artifacts: 'gitleaks-report.json', allowEmptyArchive: true
-            } else if (gitleaksResult != 0) {
-                error "Gitleaks scan failed with exit code ${gitleaksResult}"
+            // Check if the report file exists
+            def reportExists = fileExists 'gitleaks-report.json'
+            
+            if (reportExists) {
+                echo "Gitleaks report found. Archiving..."
+                archiveArtifacts artifacts: 'gitleaks-report.json', allowEmptyArchive: false
+            } else {
+                echo "Gitleaks report not found. Check the output for errors."
+                error "Gitleaks scan failed: Report not generated"
             }
         }
     }
