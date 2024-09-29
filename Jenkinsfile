@@ -22,6 +22,9 @@ stages{
                     // Pull and run the Gitleaks Docker image with a custom config file
                     sh '''
                     docker run --rm -v $(pwd):/path -v $(pwd)/.gitleaks.toml:/.gitleaks.toml zricethezav/gitleaks:latest detect --source /path --config /.gitleaks.toml --report-format json --report-path gitleaks-report.json
+                    // Display the contents of the report
+                    echo "Gitleaks Report:"
+                    cat gitleaks-report.json
                     '''
                 }
             }
