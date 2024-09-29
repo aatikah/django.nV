@@ -24,10 +24,10 @@ stages{
                 sh 'rm -f gitleaks_report.json'
                 
                 // Pull the Gitleaks Docker image
-                sh 'sudo docker pull zricethezav/gitleaks'
+                sh 'docker pull zricethezav/gitleaks'
                 
                 // Run Gitleaks in a Docker container and capture the exit code
-                def gitleaksStatus = sh(script: 'sudo docker run --rm -v /var/lib/jenkins/workspace/vul-django:/repo zricethezav/gitleaks detect --source /repo --report-path /repo/gitleaks_report.json --report-format json', returnStatus: true)
+                def gitleaksStatus = sh(script: 'docker run --rm -v /var/lib/jenkins/workspace/vul-django:/repo zricethezav/gitleaks detect --source /repo --report-path /repo/gitleaks_report.json --report-format json', returnStatus: true)
                 
                //  Display the Gitleaks report
                 sh 'cat gitleaks_report.json'
