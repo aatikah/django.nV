@@ -36,9 +36,7 @@ stages{
     stage('Bandit Security Scan') {
     steps {
         script {
-            // Ensure python3-venv is installed
-            sh 'apt-get update && sudo apt-get install -y python3-venv'
-            
+           
             // Run Bandit scan and generate reports
             sh '''
                 python3 -m venv bandit_venv
