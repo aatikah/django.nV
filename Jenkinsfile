@@ -36,8 +36,6 @@ stages{
     stage('Bandit Security Scan') {
     steps {
         script {
-            // Install Bandit if not already installed
-            sh 'pip install bandit'
             
             // Run Bandit scan and generate reports
             sh '''
