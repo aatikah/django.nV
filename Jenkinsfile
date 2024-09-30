@@ -32,6 +32,48 @@ stages{
                 }
             }
         }
+
+    stage('Bandit Security Scan') {
+    steps {
+        script {
+            // Install Bandit if not already installed
+            sh 'pip install bandit'
+            
+            // Run Bandit scan and generate reports
+            sh '''
+                bandit -r . -f json -o bandit-report.json --exit-zero
+                bandit -r . -f html -o bandit-report.html --exit-zero
+            '''
+            
+            // Archive the reports as artifacts
+            archiveArtifacts artifacts: 'bandit-report.json,bandit-report.html', allowEmptyArchive: true
+        }
+    }
+    post {
+        always {
+            // Publish HTML report
+            publishHTML(target: [
+                allowMissing: false,
+                alwaysLinkToLastBuild: false,
+                keepAll: true,
+                reportDir: '.',
+                reportFiles: 'bandit-report.html',
+                reportName: 'Bandit Security Scan Report'
+            ])
+            
+            // Parse JSON report to check for issues
+            script {
+                def jsonReport = readJSON file: 'bandit-report.json'
+                def issueCount = jsonReport.results.size()
+                if (issueCount > 0) {
+                    echo "Bandit found ${issueCount} potential security issue(s). Please review the report."
+                } else {
+                    echo "Bandit scan completed successfully with no issues found."
+                }
+            }
+        }
+    }
+}
    
 
 }
