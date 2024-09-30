@@ -26,10 +26,10 @@ stages{
 
                 }
                  // Display the contents of the report in a separate step
-                script {
-                    echo "Gitleaks Report:"
-                    sh 'cat gitleaks-report.json || echo "Report not found or empty."'
-                }
+                //script {
+                  //  echo "Gitleaks Report:"
+                  //  sh 'cat gitleaks-report.json || echo "Report not found or empty."'
+                //}
             }
         }
 
