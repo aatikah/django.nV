@@ -53,10 +53,7 @@ stages{
             
             // Archive the reports as artifacts
             archiveArtifacts artifacts: 'bandit-report.json,bandit-report.html', allowEmptyArchive: true
-        }
-    }
-    post {
-        always {
+
             // Publish HTML report
             publishHTML(target: [
                 allowMissing: false,
@@ -79,6 +76,9 @@ stages{
             }
         }
     }
+ 
+            
+     
 }
    
 
