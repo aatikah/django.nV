@@ -46,9 +46,11 @@ stages{
                 pip install --upgrade pip
                 pip install bandit
                 
-            //  Run Bandit scan and generate reports
+            
                 bandit -r . -f json -o bandit-report.json --exit-zero
                 bandit -r . -f html -o bandit-report.html --exit-zero
+
+                deactivate
             '''
             
             // Archive the reports as artifacts
