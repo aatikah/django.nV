@@ -33,6 +33,33 @@ stages{
             }
         }
 
+    stage('Source Composition Analysis - OWASP Dependency-Check') {
+            steps {
+                script {
+                    catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
+                        // Run Dependency-Check with JSON and HTML reports
+                        dependencyCheck additionalArguments: '--format JSON,HTML', odcInstallation: 'DependencyCheck', outdir: 'dependency-check-report', scanpath: '.'
+                    }
+                }
+            }
+            post {
+                always {
+                    // Archive the report files (HTML and JSON)
+                    archiveArtifacts artifacts: 'dependency-check-report/*.json, dependency-check-report/*.html', allowEmptyArchive: true
+
+                    // Publish the HTML report for easy viewing in Jenkins
+                    publishHTML(target: [
+                        allowMissing: false,
+                        alwaysLinkToLastBuild: true,
+                        keepAll: true,
+                        reportDir: 'dependency-check-report',
+                        reportFiles: 'dependency-check-report.html',
+                        reportName: 'OWASP Dependency-Check HTML Report'
+                    ])
+                }
+            }
+        }
+
   
    
 
