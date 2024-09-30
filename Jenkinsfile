@@ -37,7 +37,7 @@ stages{
     steps {
         script {
             // Ensure python3-venv is installed
-            sh 'sudo apt-get update && sudo apt-get install -y python3-venv'
+            sh 'apt-get update && sudo apt-get install -y python3-venv'
             
             // Run Bandit scan and generate reports
             sh '''
