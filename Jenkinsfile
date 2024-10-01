@@ -55,7 +55,7 @@ stages{
                     //sh 'cat /home/jenkins/workspace/django/report/dependency-check-report.json'
 
                     // Archive the reports as artifacts
-                        archiveArtifacts artifacts: './report/dependency-check-report.json,./report/dependency-check-report.html,./report/dependency-check-report.xml', allowEmptyArchive: true
+                        archiveArtifacts artifacts: 'dependency-check-report.json,dependency-check-report.html,dependency-check-report.xml', allowEmptyArchive: true
 
             // Publish HTML report
                     publishHTML(target: [
