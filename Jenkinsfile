@@ -36,11 +36,10 @@ stages{
     stage('Source Composition Analysis - OWASP Dependency-Check') {
             steps {
                 script {
+                    // Catch vulnerabilities but continue the build process
                     catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
-                        // Run Dependency-Check with JSON and HTML reports
-                        dependencyCheck additionalArguments: '--format JSON,HTML', odcInstallation: 'DependencyCheck', outdir: 'dependency-check-report', scanpath: '.'
+                        dependencyCheck additionalArguments: '--format ALL'
                     }
-                }
             }
             post {
                 always {
