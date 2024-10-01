@@ -33,35 +33,53 @@ stages{
             }
         }
 
-    stage('Source Composition Analysis - OWASP Dependency-Check') {
-            steps {
-                script {
-                    // Catch vulnerabilities but continue the build process
-                    catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
-                        dependencyCheck additionalArguments: '--format ALL'
-                    }
-            }
-            post {
-                always {
-                    // Archive the report files (HTML and JSON)
-                    archiveArtifacts artifacts: 'dependency-check-report/*.json, dependency-check-report/*.html', allowEmptyArchive: true
+   stage('OWASP Dependency-Check') {
+    steps {
+        // Run OWASP Dependency-Check
+        dependencyCheck additionalArguments: '''
+            -o './'
+            -s './'
+            -f 'HTML,JSON'
+            --prettyPrint''',
+            odcInstallation: 'OWASP-Dependency-Check'
+    }
+    post {
+        always {
+            // Archive the reports as artifacts
+            archiveArtifacts artifacts: 'dependency-check-report.html,dependency-check-report.json', allowEmptyArchive: true
 
-                    // Publish the HTML report for easy viewing in Jenkins
-                    publishHTML(target: [
-                        allowMissing: false,
-                        alwaysLinkToLastBuild: true,
-                        keepAll: true,
-                        reportDir: 'dependency-check-report',
-                        reportFiles: 'dependency-check-report.html',
-                        reportName: 'OWASP Dependency-Check HTML Report'
-                    ])
+            // Publish HTML report
+            publishHTML(target: [
+                allowMissing: true,
+                alwaysLinkToLastBuild: false,
+                keepAll: true,
+                reportDir: '.',
+                reportFiles: 'dependency-check-report.html',
+                reportName: 'Dependency-Check Report'
+            ])
+
+            // Parse JSON report to provide a summary
+            script {
+                if (fileExists('dependency-check-report.json')) {
+                    def jsonReport = readJSON file: 'dependency-check-report.json'
+                    def vulnerableDependencies = jsonReport.dependencies.findAll { it.vulnerabilities }
+                    def totalVulnerabilities = vulnerableDependencies.collect { it.vulnerabilities.size() }.sum()
+                    def highVulnerabilities = vulnerableDependencies.collect { 
+                        it.vulnerabilities.findAll { vuln -> vuln.cvssv3?.baseScore >= 7.0 }.size()
+                    }.sum()
+
+                    echo """OWASP Dependency-Check Summary:
+                    Total dependencies scanned: ${jsonReport.dependencies.size()}
+                    Dependencies with vulnerabilities: ${vulnerableDependencies.size()}
+                    Total vulnerabilities found: ${totalVulnerabilities}
+                    High severity vulnerabilities (CVSS >= 7.0): ${highVulnerabilities}
+                    """
+                } else {
+                    echo "Dependency-Check JSON report not found. The scan may have failed."
                 }
             }
         }
-
-  
-   
-
+    }
 }
 }
 }
