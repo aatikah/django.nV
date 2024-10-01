@@ -69,7 +69,7 @@ stages{
 
                     // Parse JSON report to check for issues
            
-                if (fileExists('dependency-check-report.json')) {
+                if (fileExists('report/dependency-check-report.json')) {
                     def jsonReport = readJSON file: 'report/dependency-check-report.json'
                     def vulnerabilities = jsonReport.dependencies.collect { it.vulnerabilities ?: [] }.flatten()
                     def highVulnerabilities = vulnerabilities.findAll { it.cvssv3?.baseScore >= 7 }
