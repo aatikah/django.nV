@@ -55,14 +55,14 @@ stages{
                     //sh 'cat /home/jenkins/workspace/django/report/dependency-check-report.json'
 
                     // Archive the reports as artifacts
-                        archiveArtifacts artifacts: '/report/dependency-check-report.json,/report/dependency-check-report.html,/report/dependency-check-report.xml', allowEmptyArchive: true
+                        archiveArtifacts artifacts: './report/dependency-check-report.json,./report/dependency-check-report.html,./report/dependency-check-report.xml', allowEmptyArchive: true
 
             // Publish HTML report
                     publishHTML(target: [
                         allowMissing: false,
                         alwaysLinkToLastBuild: false,
                         keepAll: true,
-                        reportDir: '/report',
+                        reportDir: './report',
                         reportFiles: 'dependency-check-report.html',
                         reportName: 'OWASP Dependency Checker Report'
                     ])
