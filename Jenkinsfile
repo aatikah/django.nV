@@ -23,6 +23,18 @@ stages{
                     sh '''
                         docker run --rm -v $(pwd):/path -v $(pwd)/.gitleaks.toml:/.gitleaks.toml zricethezav/gitleaks:latest detect --source /path --config /.gitleaks.toml --report-format json --report-path /path/gitleaks-report.json || true
                         '''
+                    // Archive the reports as artifacts
+                        archiveArtifacts artifacts: 'gitleaks-report.json', allowEmptyArchive: true
+
+            // Publish HTML report
+                    publishHTML(target: [
+                        allowMissing: false,
+                        alwaysLinkToLastBuild: false,
+                        keepAll: true,
+                        reportDir: '.',
+                        reportFiles: 'bandit-report.html',
+                        reportName: 'Bandit Security Scan Report'
+                    ])
 
                 }
                  // Display the contents of the report in a separate step
@@ -39,8 +51,21 @@ stages{
                     sh 'wget "https://raw.githubusercontent.com/aatikah/django.nV/master/owasp-dependency-check.sh"'
                    // sh 'chmod +x owasp-dependency-check.sh'
                     sh 'bash owasp-dependency-check.sh'
-                    sh 'cat /home/jenkins/workspace/django/report/dependency-check-report.xml'
-                    sh 'cat /home/jenkins/workspace/django/report/dependency-check-report.json'
+                    //sh 'cat /home/jenkins/workspace/django/report/dependency-check-report.xml'
+                    //sh 'cat /home/jenkins/workspace/django/report/dependency-check-report.json'
+
+                    // Archive the reports as artifacts
+                        archiveArtifacts artifacts: 'dependency-check-report.json,dependency-check-report.html,dependency-check-report.xml', allowEmptyArchive: true
+
+            // Publish HTML report
+                    publishHTML(target: [
+                        allowMissing: false,
+                        alwaysLinkToLastBuild: false,
+                        keepAll: true,
+                        reportDir: '.',
+                        reportFiles: 'dependency-check-report.html',
+                        reportName: 'OWASP Dependency Checker Report'
+                    ])
 
                 
                 }
