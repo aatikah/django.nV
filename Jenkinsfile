@@ -5,14 +5,10 @@ pipeline {
    
 stages{
     
-    stage('Echo') {
+    stage('Testing Node') {
             steps {
-                script {
-                    
-                    
-                    sh 'echo "Hello from Node"'
-                    
-                   
+                script {  
+                    sh 'echo "Hello from Node"' 
                }
             }
             }
@@ -68,7 +64,7 @@ stages{
                     ])
 
                     // Parse JSON report to check for issues
-           
+           // This if block can be added in another script block outside this script block to fail pipeline if cvssv is above 7
                 if (fileExists('report/dependency-check-report.json')) {
                     def jsonReport = readJSON file: 'report/dependency-check-report.json'
                     def vulnerabilities = jsonReport.dependencies.collect { it.vulnerabilities ?: [] }.flatten()
@@ -83,6 +79,52 @@ stages{
                 }
             }
         }
+
+    stage('SAST With Bandit Security Scan') {
+    steps {
+        script {
+           
+            // Run Bandit scan and generate reports
+            sh '''
+                python3 -m venv bandit_venv
+                . bandit_venv/bin/activate
+                pip install --upgrade pip
+                pip install bandit
+                
+            
+                bandit -r . -f json -o bandit-report.json --exit-zero
+                bandit -r . -f html -o bandit-report.html --exit-zero
+
+                deactivate
+            '''
+            
+            // Archive the reports as artifacts
+            archiveArtifacts artifacts: 'bandit-report.json,bandit-report.html', allowEmptyArchive: true
+
+            // Publish HTML report
+            publishHTML(target: [
+                allowMissing: false,
+                alwaysLinkToLastBuild: false,
+                keepAll: true,
+                reportDir: '.',
+                reportFiles: 'bandit-report.html',
+                reportName: 'Bandit Security Scan Report'
+            ])
+            
+            // Parse JSON report to check for issues
+            script {
+                def jsonReport = readJSON file: 'bandit-report.json'
+                def issueCount = jsonReport.results.size()
+                if (issueCount > 0) {
+                    echo "Bandit found ${issueCount} potential security issue(s). Please review the report."
+                } else {
+                    echo "Bandit scan completed successfully with no issues found."
+                }
+            }
+        }
+    }
+    
+}
 
    
 }
