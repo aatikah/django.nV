@@ -70,7 +70,7 @@ stages{
                     // Parse JSON report to check for issues
            
                 if (fileExists('dependency-check-report.json')) {
-                    def jsonReport = readJSON file: 'dependency-check-report.json'
+                    def jsonReport = readJSON file: 'report/dependency-check-report.json'
                     def vulnerabilities = jsonReport.dependencies.collect { it.vulnerabilities ?: [] }.flatten()
                     def highVulnerabilities = vulnerabilities.findAll { it.cvssv3?.baseScore >= 7 }
                     echo "OWASP Dependency-Check found ${vulnerabilities.size()} vulnerabilities, ${highVulnerabilities.size()} of which are high severity (CVSS >= 7.0)"
