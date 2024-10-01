@@ -32,54 +32,35 @@ stages{
                 //}
             }
         }
+     stage('Source Composition Analysis'){
+            steps{
+                script{
+                    sh 'rm owasp* || true'
+                    sh 'wget "https://raw.githubusercontent.com/aatikah/django.nV/master/owasp-dependency-check.sh"'
+                  //  sh 'chmod +x owasp-dependency-check.sh'
+                    sh 'bash owasp-dependency-check.sh'
+                 //   sh 'cat /var/lib/jenkins/workspace/vul-django/odc-reports/dependency-check-report.xml'
+                   // sh 'cat /var/lib/jenkins/workspace/vul-django/odc-reports/dependency-check-report.json'
 
-   stage('OWASP Dependency-Check') {
-    steps {
-        // Run OWASP Dependency-Check
-        dependencyCheck additionalArguments: '''
-            -o './'
-            -s './'
-            -f 'HTML,JSON'
-            --prettyPrint''',
-            odcInstallation: 'OWASP-Dependency-Check'
-    }
-    post {
-        always {
-            // Archive the reports as artifacts
-            archiveArtifacts artifacts: 'dependency-check-report.html,dependency-check-report.json', allowEmptyArchive: true
+                    //def response = sh(
+                      //  script: """
+                      //  curl -X POST ${DEFECT_DOJO}/api/v2/import-scan/ \
+                      //  -H "Authorization: Token ${DEFECTDOJO_API_KEY}" \
+                      //  -H "accept: application/json" \
+                       // -H "Content-Type: multipart/form-data" \
+                       // -F "file=@/var/lib/jenkins/workspace/vul-django/odc-reports/dependency-check-report.json" \
+                      //  -F 'scan_type=Dependency Check Scan' \
+                      //  -F 'engagement=${ENGAGEMENT_ID}' \
+                      //  -F 'product_name=django-pipeline'
+                      //  """,
+                    //    returnStdout: true
+                  //  ).trim()
 
-            // Publish HTML report
-            publishHTML(target: [
-                allowMissing: true,
-                alwaysLinkToLastBuild: false,
-                keepAll: true,
-                reportDir: '.',
-                reportFiles: 'dependency-check-report.html',
-                reportName: 'Dependency-Check Report'
-            ])
-
-            // Parse JSON report to provide a summary
-            script {
-                if (fileExists('dependency-check-report.json')) {
-                    def jsonReport = readJSON file: 'dependency-check-report.json'
-                    def vulnerableDependencies = jsonReport.dependencies.findAll { it.vulnerabilities }
-                    def totalVulnerabilities = vulnerableDependencies.collect { it.vulnerabilities.size() }.sum()
-                    def highVulnerabilities = vulnerableDependencies.collect { 
-                        it.vulnerabilities.findAll { vuln -> vuln.cvssv3?.baseScore >= 7.0 }.size()
-                    }.sum()
-
-                    echo """OWASP Dependency-Check Summary:
-                    Total dependencies scanned: ${jsonReport.dependencies.size()}
-                    Dependencies with vulnerabilities: ${vulnerableDependencies.size()}
-                    Total vulnerabilities found: ${totalVulnerabilities}
-                    High severity vulnerabilities (CVSS >= 7.0): ${highVulnerabilities}
-                    """
-                } else {
-                    echo "Dependency-Check JSON report not found. The scan may have failed."
+                  //  echo "Response from DefectDojo: ${response}"
                 }
             }
         }
-    }
-}
+
+   
 }
 }
