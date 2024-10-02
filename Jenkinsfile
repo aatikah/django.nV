@@ -156,7 +156,7 @@ stages{
                         sh "docker logout $DOCKER_REGISTRY"
 
                         // Clean up: remove any leftover Docker credentials
-                        sh "rm -f /home/jenkins/.docker/config.json"
+                        //sh "rm -f /home/jenkins/.docker/config.json"
                     }
                 }
             }
