@@ -140,7 +140,7 @@ stages{
                     // Wrap the Docker commands with withCredentials to securely access the Docker credentials
                     withCredentials([usernamePassword(credentialsId: 'DOCKER_CREDENTIALS_ID', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                         // Build the Docker image
-                        sh "docker build -t ${DOCKER_IMAGE} ."
+                        sh "docker build -t ${DOCKER_IMAGE}:v5 ."
 
                         // Log in to the Docker registry using a more secure method. set +x set -x This turns off command echoing temporarily
                         sh '''
@@ -150,7 +150,7 @@ stages{
                         '''
                        
                         // Push the Docker image
-                        sh "docker push ${DOCKER_IMAGE}:V5"
+                        sh "docker push ${DOCKER_IMAGE}:v5"
                         //sh "docker push ${DOCKER_IMAGE}"
                         
                         // Log out from the Docker registry
