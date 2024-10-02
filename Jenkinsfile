@@ -171,7 +171,7 @@ stages{
             def remoteUser = 'abuabdillah5444'
             def dockerImage = 'aatikah/django-app'
             
-            sshagent(['DJANGO_KEY']) {
+            sshagent(['slave-jenkins-key']) {
                 // Stop and remove the old container if it exists
                 sh """
                     ssh -o StrictHostKeyChecking=no ${remoteUser}@${remoteHost} '
