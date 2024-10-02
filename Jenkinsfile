@@ -141,9 +141,13 @@ stages{
                     withCredentials([usernamePassword(credentialsId: 'DOCKER_CREDENTIALS_ID', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                         // Build the Docker image
                         sh "docker build -t ${DOCKER_IMAGE} ."
-                        
-                        // Log in to the Docker registry
-                        sh "echo $DOCKER_PASSWORD | docker login $DOCKER_REGISTRY -u $DOCKER_USERNAME --password-stdin"
+
+                        // Log in to the Docker registry using a more secure method. set +x set -x This turns off command echoing temporarily
+                        sh '''
+                            set +x
+                            echo "$DOCKER_PASSWORD" | docker login $DOCKER_REGISTRY -u "$DOCKER_USERNAME" --password-stdin
+                            set -x
+                        '''
                         
                         // Push the Docker image
                         sh "docker push ${DOCKER_IMAGE}"
