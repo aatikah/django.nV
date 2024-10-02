@@ -168,7 +168,7 @@ stages{
     steps {
         script {
             def remoteHost = '35.192.105.176'
-            def remoteUser = 'abuabdillah5444'
+            def remoteUser = 'jenkins-slave'
             def dockerImage = 'aatikah/django-app'
             
             sshagent(['slave-jenkins-key']) {
