@@ -2,7 +2,14 @@ pipeline {
     agent {
         label 'slave-jenkins-deb'  // Replace with the label of your slave node
     }
-   
+    environment{
+        DOCKER_REGISTRY = 'https://index.docker.io/v1/'
+        DOCKER_IMAGE = 'django-app'
+        
+    }
+       //DOCKER_CREDENTIALS_ID = 'docker-credential'
+    // REPOSITORY = 'aatikah'
+
 stages{
     
     stage('Testing Node') {
@@ -125,6 +132,28 @@ stages{
     }
     
 }
+
+    stage('Build Docker Image') {
+
+            steps {
+                script {
+                    // Wrap the Docker commands with withCredentials to securely access the Docker credentials
+                    withCredentials([usernamePassword(credentialsId: 'DOCKER_CREDENTIALS_ID', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        // Build the Docker image
+                        sh "docker build -t ${DOCKER_IMAGE} ."
+                        
+                        // Log in to the Docker registry
+                        sh "echo $DOCKER_PASSWORD | docker login $DOCKER_REGISTRY -u $DOCKER_USERNAME --password-stdin"
+                        
+                        // Push the Docker image
+                        sh "docker push ${DOCKER_IMAGE}"
+                        
+                        // Log out from the Docker registry
+                        sh "docker logout $DOCKER_REGISTRY"
+                    }
+                }
+            }
+        }
 
    
 }
