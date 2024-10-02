@@ -144,10 +144,12 @@ stages{
 
                         // Log in to the Docker registry using a more secure method. set +x set -x This turns off command echoing temporarily
                         sh '''
-                            set +x
+                            
                             echo "$DOCKER_PASSWORD" | docker login $DOCKER_REGISTRY -u "$DOCKER_USERNAME" --password-stdin
-                            set -x
+                            
                         '''
+                       // set +x
+                      //  set -x
                         
                         // Push the Docker image
                         sh "docker push ${DOCKER_IMAGE}"
