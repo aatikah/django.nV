@@ -144,21 +144,20 @@ stages{
 
                         // Log in to the Docker registry using a more secure method. set +x set -x This turns off command echoing temporarily
                         sh '''
-                            
+                            set +x
                             echo "$DOCKER_PASSWORD" | docker login $DOCKER_REGISTRY -u "$DOCKER_USERNAME" --password-stdin
-                            
+                            set -x
                         '''
-                       // set +x
-                      //  set -x
-                        
+                       
                         // Push the Docker image
-                        sh "docker push ${DOCKER_IMAGE}"
+                        sh "docker push ${DOCKER_IMAGE}:V5"
+                        //sh "docker push ${DOCKER_IMAGE}"
                         
                         // Log out from the Docker registry
                         sh "docker logout $DOCKER_REGISTRY"
 
                         // Clean up: remove any leftover Docker credentials
-                        //sh "rm -f /home/jenkins/.docker/config.json"
+                        sh "rm -f /home/jenkins/.docker/config.json"
                     }
                 }
             }
