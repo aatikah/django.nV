@@ -164,6 +164,49 @@ stages{
             }
         }
 
+    stage('Deploy to GCP VM') {
+    steps {
+        script {
+            def remoteHost = '35.192.105.176'
+            def remoteUser = 'abuabdillah5444'
+            def dockerImage = 'aatikah/django-app'
+            
+            sshagent(['DJANGO_KEY']) {
+                // Stop and remove the old container if it exists
+                sh """
+                    ssh -o StrictHostKeyChecking=no ${remoteUser}@${remoteHost} '
+                        container_id=\$(sudo docker ps -q --filter ancestor=${dockerImage})
+                        if [ ! -z "\$container_id" ]; then
+                            sudo docker stop \$container_id
+                            sudo docker rm \$container_id
+                        fi
+                    '
+                """
+                
+                // Pull the latest image and run the new container
+                sh """
+                    ssh -o StrictHostKeyChecking=no ${remoteUser}@${remoteHost} '
+                        sudo docker pull ${dockerImage} && 
+                        sudo docker run -d --restart unless-stopped -p 8000:8000 --name my-django-app ${dockerImage}
+                    '
+                """
+                
+                // Verify the deployment
+                sh """
+                    ssh -o StrictHostKeyChecking=no ${remoteUser}@${remoteHost} '
+                        if sudo docker ps | grep -q ${dockerImage}; then
+                            echo "Deployment successful"
+                        else
+                            echo "Deployment failed"
+                            exit 1
+                        fi
+                    '
+                """
+            }
+        }
+    }
+}
+
    
 }
 }
