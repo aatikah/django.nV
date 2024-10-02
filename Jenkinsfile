@@ -167,7 +167,7 @@ stages{
     stage('Deploy to GCP VM') {
     steps {
         script {
-            def remoteHost = '35.192.105.176'
+            def remoteHost = '34.134.182.0'
             def remoteUser = 'jenkins-slave'
             def dockerImage = 'aatikah/django-app'
             
