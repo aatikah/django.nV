@@ -4,7 +4,7 @@ pipeline {
     }
     environment{
         DOCKER_REGISTRY = 'https://index.docker.io/v1/'
-        DOCKER_IMAGE = 'django-app'
+        DOCKER_IMAGE = 'aatikah/django-app'
         
     }
        //DOCKER_CREDENTIALS_ID = 'docker-credential'
