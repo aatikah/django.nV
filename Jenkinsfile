@@ -250,8 +250,8 @@ stages{
             def TARGET_URL = 'http://34.134.182.0'
             // Run Nikto scan
             sh """
-                /home/abuabdillah5444/nikto/program/nikto.pl -h \${TARGET_URL} -output nikto_output.json -Format json
-                /home/abuabdillah5444/nikto/program/nikto.pl -h \${TARGET_URL} -output nikto_output.html -Format html
+                /home/abuabdillah5444/nikto/program/nikto.pl -h ${TARGET_URL} -output nikto_output.json -Format json
+                /home/abuabdillah5444/nikto/program/nikto.pl -h ${TARGET_URL} -output nikto_output.html -Format html
             """
             
             // Archive the results
