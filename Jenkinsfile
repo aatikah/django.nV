@@ -323,7 +323,11 @@ stages{
             steps {
                 script {
                     // Install Python requests library if not already available
-                    sh 'pip install requests'
+                    sh '''
+                    python3 -m venv venv
+                    source venv/bin/activate
+                    pip install requests
+                    '''
 
                     // Function to upload a report to DefectDojo
                     def uploadToDefectDojo = { reportPath, reportType ->
