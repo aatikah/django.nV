@@ -286,10 +286,9 @@ stages{
 
             // Function to upload a report to DefectDojo
             def uploadToDefectDojo = { reportPath, reportType ->
-                def scriptContent = """
+    def scriptContent = """
 import requests
 import json
-
 url = "${DEFECTDOJO_URL}/api/v2/import-scan/"
 headers = {
     'Authorization': 'Token ${DEFECTDOJO_API_KEY}',
@@ -298,21 +297,22 @@ headers = {
 data = {
     'product_name': '${PRODUCT_NAME}',
     'engagement': '${ENGAGEMENT_ID}',
-    'scan_type': '${reportType}',
+    'scan_type': '{{REPORT_TYPE}}',
     'active': 'true',
     'verified': 'true',
 }
 files = {'file': open('${reportPath}', 'rb')}
-
 response = requests.post(url, headers=headers, data=data, files=files)
 print(response.text)
 if response.status_code != 201:
-    raise Exception(f"Failed to upload {reportType} report to DefectDojo: {response.text}")
+    raise Exception(f"Failed to upload {{REPORT_TYPE}} report to DefectDojo: {response.text}")
 """
-                writeFile file: 'upload_to_defectdojo.py', text: scriptContent
-                // Run the Python script in the virtual environment using bash
-                sh 'bash -c "source venv/bin/activate && python3 upload_to_defectdojo.py"'
-            }
+    // Replace the placeholder with the actual report type
+    scriptContent = scriptContent.replace('{{REPORT_TYPE}}', reportType)
+    writeFile file: 'upload_to_defectdojo.py', text: scriptContent
+    // Run the Python script in the virtual environment using bash
+    sh 'bash -c "source venv/bin/activate && python3 upload_to_defectdojo.py"'
+}
 
             // Upload Gitleaks report
             uploadToDefectDojo('gitleaks-report.json', 'Gitleaks Scan')
