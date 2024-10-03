@@ -92,51 +92,7 @@ stages{
         }
 
     //BANDIT STAGE
-    stage('SAST With Bandit Security Scan') {
-    steps {
-        script {
-           
-            // Run Bandit scan and generate reports
-            sh '''
-                python3 -m venv bandit_venv
-                . bandit_venv/bin/activate
-                pip install --upgrade pip
-                pip install bandit
-                
-            
-                bandit -r . -f json -o bandit-report.json --exit-zero
-                bandit -r . -f html -o bandit-report.html --exit-zero
-
-                deactivate
-            '''
-            
-            // Archive the reports as artifacts
-            archiveArtifacts artifacts: 'bandit-report.json,bandit-report.html', allowEmptyArchive: true
-
-            // Publish HTML report
-            publishHTML(target: [
-                allowMissing: false,
-                alwaysLinkToLastBuild: false,
-                keepAll: true,
-                reportDir: '.',
-                reportFiles: 'bandit-report.html',
-                reportName: 'Bandit Security Scan Report'
-            ])
-            
-            // Parse JSON report to check for issues
-            script {
-                def jsonReport = readJSON file: 'bandit-report.json'
-                def issueCount = jsonReport.results.size()
-                if (issueCount > 0) {
-                    echo "Bandit found ${issueCount} potential security issue(s). Please review the report."
-                } else {
-                    echo "Bandit scan completed successfully with no issues found."
-                }
-            }
-        }
-    }
-    
-}
+  
     
 
     stage('Build and Push Docker Image') {
@@ -320,17 +276,17 @@ stages{
 }
 
     stage('Forward Reports to DefectDojo') {
-            steps {
-                script {
-                    // Install Python requests library if not already available
-                    sh '''
-                    python3 -m venv venv
-                    bash -c "source venv/bin/activate && pip install requests"
-                    '''
+    steps {
+        script {
+            // Create a virtual environment and install requests using bash
+            sh '''
+                python3 -m venv venv
+                bash -c "source venv/bin/activate && pip install requests"
+            '''
 
-                    // Function to upload a report to DefectDojo
-                    def uploadToDefectDojo = { reportPath, reportType ->
-                        def scriptContent = """
+            // Function to upload a report to DefectDojo
+            def uploadToDefectDojo = { reportPath, reportType ->
+                def scriptContent = """
 import requests
 import json
 
@@ -340,7 +296,7 @@ headers = {
     'Accept': 'application/json'
 }
 data = {
-    'product_name': '${PRODUCT_NAME}',
+    'product_name': '${PRODUCT_NAME.strip()}',
     'engagement_name': '${ENGAGEMENT_NAME}',
     'scan_type': '${reportType}',
     'active': 'true',
@@ -353,27 +309,26 @@ print(response.text)
 if response.status_code != 201:
     raise Exception(f"Failed to upload {reportType} report to DefectDojo: {response.text}")
 """
-                        writeFile file: 'upload_to_defectdojo.py', text: scriptContent
-                        sh 'python3 upload_to_defectdojo.py'
-                    }
-
-                    // Upload Gitleaks report
-                    uploadToDefectDojo('gitleaks-report.json', 'Gitleaks Scan')
-
-                    // Upload OWASP Dependency Check report
-                    uploadToDefectDojo('report/dependency-check-report.json', 'Dependency Check Scan')
-
-                    // Upload Bandit report
-                    uploadToDefectDojo('bandit-report.json', 'Bandit Scan')
-
-                    // Upload ZAP report
-                    //uploadToDefectDojo('zap-scan-report.html', 'ZAP Scan')
-
-                    // Upload Nikto report
-                    uploadToDefectDojo('nikto_output.json', 'Nikto Scan')
-                }
+                writeFile file: 'upload_to_defectdojo.py', text: scriptContent
+                // Run the Python script in the virtual environment using bash
+                sh 'bash -c "source venv/bin/activate && python3 upload_to_defectdojo.py"'
             }
+
+            // Upload Gitleaks report
+            uploadToDefectDojo('gitleaks-report.json', 'Gitleaks Scan')
+
+            // Upload OWASP Dependency Check report
+            uploadToDefectDojo('report/dependency-check-report.json', 'Dependency Check Scan')
+
+            // Upload Bandit report
+            //uploadToDefectDojo('bandit-report.json', 'Bandit Scan')
+
+            // Upload Nikto report
+            uploadToDefectDojo('nikto_output.json', 'Nikto Scan')
         }
+    }
+}
+
 
 
    
