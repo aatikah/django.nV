@@ -319,6 +319,60 @@ stages{
     }
 }
 
+    stage('Forward Reports to DefectDojo') {
+            steps {
+                script {
+                    // Install Python requests library if not already available
+                    sh 'pip install requests'
+
+                    // Function to upload a report to DefectDojo
+                    def uploadToDefectDojo = { reportPath, reportType ->
+                        def scriptContent = """
+import requests
+import json
+
+url = "${DEFECTDOJO_URL}/api/v2/import-scan/"
+headers = {
+    'Authorization': 'Token ${DEFECTDOJO_API_KEY}',
+    'Accept': 'application/json'
+}
+data = {
+    'product_name': '${PRODUCT_NAME}',
+    'engagement_name': '${ENGAGEMENT_NAME}',
+    'scan_type': '${reportType}',
+    'active': 'true',
+    'verified': 'true',
+}
+files = {'file': open('${reportPath}', 'rb')}
+
+response = requests.post(url, headers=headers, data=data, files=files)
+print(response.text)
+if response.status_code != 201:
+    raise Exception(f"Failed to upload {reportType} report to DefectDojo")
+"""
+                        writeFile file: 'upload_to_defectdojo.py', text: scriptContent
+                        sh 'python3 upload_to_defectdojo.py'
+                    }
+
+                    // Upload Gitleaks report
+                    uploadToDefectDojo('gitleaks-report.json', 'Gitleaks Scan')
+
+                    // Upload OWASP Dependency Check report
+                    uploadToDefectDojo('report/dependency-check-report.json', 'Dependency Check Scan')
+
+                    // Upload Bandit report
+                    uploadToDefectDojo('bandit-report.json', 'Bandit Scan')
+
+                    // Upload ZAP report
+                    //uploadToDefectDojo('zap-scan-report.html', 'ZAP Scan')
+
+                    // Upload Nikto report
+                    uploadToDefectDojo('nikto_output.json', 'Nikto Scan')
+                }
+            }
+        }
+
+
    
 }
 }
