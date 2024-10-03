@@ -5,10 +5,10 @@ pipeline {
     environment{
         DOCKER_REGISTRY = 'https://index.docker.io/v1/'
         DOCKER_IMAGE = 'aatikah/django-app'
+        remoteHost = '34.134.182.0'
         
     }
-       //DOCKER_CREDENTIALS_ID = 'docker-credential'
-    // REPOSITORY = 'aatikah'
+     
 
 stages{
     
@@ -124,7 +124,7 @@ stages{
     stage('Deploy to GCP VM') {
     steps {
         script {
-            def remoteHost = '34.134.182.0'
+            //def remoteHost = '34.134.182.0'
             def remoteUser = 'jenkins-slave'
             def dockerImage = 'aatikah/django-app'
             
@@ -168,7 +168,7 @@ stages{
     steps {
         script {
             def zapHome ='/opt/zaproxy' // Path to ZAP installation
-            def targetURL = 'http://34.134.182.0'  // Update this to your application's URL
+            //def targetURL = 'http://34.134.182.0'  // Update this to your application's URL
             def reportNameHtml = "zap-scan-report.html"
             //def reportNameJson = "zap-scan-report.json"
             
@@ -176,7 +176,7 @@ stages{
             sh """
                 
                 ${zapHome}/zap.sh -cmd \
-                    -quickurl ${targetURL} \
+                    -quickurl ${remoteHost} \
                     -quickprogress 
 
             """
@@ -247,11 +247,11 @@ stages{
     steps {
         script {
 
-            def TARGET_URL = 'http://34.134.182.0'
+            //def TARGET_URL = 'http://34.134.182.0'
             // Run Nikto scan
             sh """
-                /home/abuabdillah5444/nikto/program/nikto.pl -h ${TARGET_URL} -output nikto_output.json -Format json
-                /home/abuabdillah5444/nikto/program/nikto.pl -h ${TARGET_URL} -output nikto_output.html -Format html
+                /home/abuabdillah5444/nikto/program/nikto.pl -h ${remoteHost} -output nikto_output.json -Format json
+                /home/abuabdillah5444/nikto/program/nikto.pl -h ${remoteHost} -output nikto_output.html -Format html
             """
             
             // Archive the results
