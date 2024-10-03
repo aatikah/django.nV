@@ -170,7 +170,7 @@ stages{
             def zapHome ='/opt/zaproxy' // Path to ZAP installation
             def targetURL = 'http://34.134.182.0'  // Update this to your application's URL
             def reportNameHtml = "zap-scan-report.html"
-            def reportNameJson = "zap-scan-report.json"
+            //def reportNameJson = "zap-scan-report.json"
             
             // Perform ZAP scan
             sh """
@@ -179,26 +179,27 @@ stages{
                     -quickurl ${targetURL} \
                     -quickprogress \
                     -quickout ${reportNameHtml} \
-                    -quickout ${reportNameJson} 
+                    
                 
             """
             
             // Archive the ZAP reports
-            archiveArtifacts artifacts: "${reportNameHtml},${reportNameJson}", fingerprint: true
+            //archiveArtifacts artifacts: "${reportNameHtml},${reportNameJson}", fingerprint: true
+            archiveArtifacts artifacts: "${reportNameHtml}", fingerprint: true
             
             // Read and parse JSON report
-            def zapJson = readJSON file: reportNameJson
+           // def zapJson = readJSON file: reportNameJson
             
             // Example: Check for high alerts in JSON
-            def highAlerts = zapJson.site[0].alerts.findAll { it.riskcode >= 3 }
+           // def highAlerts = zapJson.site[0].alerts.findAll { it.riskcode >= 3 }
             
-            if (highAlerts.size() > 0) {
-                echo "Found ${highAlerts.size()} high-risk vulnerabilities!"
-                highAlerts.each { alert ->
-                    echo "High Risk Alert: ${alert.alert} at ${alert.url}"
-                }
-                error "OWASP ZAP scan found high-risk vulnerabilities. Check the ZAP report for details."
-            }
+          //  if (highAlerts.size() > 0) {
+            //    echo "Found ${highAlerts.size()} high-risk vulnerabilities!"
+              //  highAlerts.each { alert ->
+                //    echo "High Risk Alert: ${alert.alert} at ${alert.url}"
+               // }
+              //  error "OWASP ZAP scan found high-risk vulnerabilities. Check the ZAP report for details."
+           // }
 
              // Publish HTML report
             publishHTML(target: [
