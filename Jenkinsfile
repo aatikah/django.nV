@@ -174,6 +174,7 @@ stages{
             
             // Perform ZAP scan
             sh """
+                export PATH=${zapHome}:$PATH
                 ${zapHome}/zap.sh -cmd \
                     -quickurl ${targetURL} \
                     -quickprogress \
