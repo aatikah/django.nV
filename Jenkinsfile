@@ -170,7 +170,7 @@ stages{
             def zapHome ='/opt/zaproxy' // Path to ZAP installation
             def targetURL = 'http://34.134.182.0'  // Update this to your application's URL
             def reportNameHtml = "zap-scan-report.html"
-            def reportNameJson = "zap-scan-report.json"
+            //def reportNameJson = "zap-scan-report.json"
             
             // Perform ZAP scan
             sh """
@@ -180,17 +180,31 @@ stages{
                     -quickprogress \
                     -quickout ${reportNameHtml} \
 
-                ${zapHome}/zap.sh -cmd \
-                    -quickurl ${targetURL} \
-                    -quickprogress \
-                    -quickout ${reportNameJson}
-                
             """
             
             // Archive the ZAP reports
             //archiveArtifacts artifacts: "${reportNameHtml},${reportNameJson}", fingerprint: true
             archiveArtifacts artifacts: "${reportNameHtml}", fingerprint: true
-            archiveArtifacts artifacts: "${reportNameJson}", fingerprint: true
+
+
+            // Read and parse the HTML report
+            def htmlReportContent = readFile(reportNameHtml)
+
+            // Example: Check for high alerts in HTML using regex (customize based on your report structure)
+            def highRiskPattern = ~/<span class="risk"><strong>High<\/strong><\/span>.*?<a href="(.*?)">(.*?)<\/a>/
+            def highAlerts = []
+
+            htmlReportContent.eachMatch(highRiskPattern) { match ->
+                highAlerts.add([url: match[1], alert: match[2]])
+            }
+            
+            if (highAlerts.size() > 0) {
+                echo "Found ${highAlerts.size()} high-risk vulnerabilities!"
+                highAlerts.each { alert ->
+                    echo "High Risk Alert: ${alert.alert} at ${alert.url}"
+                }
+                error "OWASP ZAP scan found high-risk vulnerabilities. Check the ZAP report for details."
+            }
             
             // Read and parse JSON report
            // def zapJson = readJSON file: reportNameJson
