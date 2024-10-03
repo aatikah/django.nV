@@ -296,7 +296,7 @@ headers = {
     'Accept': 'application/json'
 }
 data = {
-    'product_name': '${PRODUCT_NAME.strip()}',
+    'product_name': '${PRODUCT_NAME}',
     'engagement_name': '${ENGAGEMENT_NAME}',
     'scan_type': '${reportType}',
     'active': 'true',
