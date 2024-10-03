@@ -6,7 +6,7 @@ pipeline {
         DOCKER_REGISTRY = 'https://index.docker.io/v1/'
         DOCKER_IMAGE = 'aatikah/django-app'
         remoteHost = '34.134.182.0'
-
+        DEFECTDOJO_API_KEY = credentials('DEFECTDOJO_API_KEY')
         DEFECTDOJO_URL = 'http://34.42.127.145:8080'
         PRODUCT_NAME = 'django-project	'
         ENGAGEMENT_NAME = '1'
