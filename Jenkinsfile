@@ -285,10 +285,12 @@ stages{
             '''
 
             // Function to upload a report to DefectDojo
-            def uploadToDefectDojo = { reportPath, reportType ->
+       def uploadToDefectDojo = { reportPath, reportType ->
     def scriptContent = """
 import requests
 import json
+import sys
+
 url = "${DEFECTDOJO_URL}/api/v2/import-scan/"
 headers = {
     'Authorization': 'Token ${DEFECTDOJO_API_KEY}',
@@ -302,10 +304,28 @@ data = {
     'verified': 'true',
 }
 files = {'file': open('${reportPath}', 'rb')}
-response = requests.post(url, headers=headers, data=data, files=files)
-print(response.text)
+
+print(f"Sending request to: {url}")
+print(f"Headers: {json.dumps(headers, indent=2)}")
+print(f"Data: {json.dumps(data, indent=2)}")
+print(f"File: {reportPath}")
+
+try:
+    response = requests.post(url, headers=headers, data=data, files=files)
+    print(f"Response status code: {response.status_code}")
+    print(f"Response content: {response.text}")
+    
+    response.raise_for_status()  # Raises an HTTPError for bad responses (4xx or 5xx)
+    
+    print("Upload successful")
+except requests.exceptions.RequestException as e:
+    print(f"Error occurred during the request: {str(e)}", file=sys.stderr)
+    sys.exit(1)
+
 if response.status_code != 201:
-    raise Exception(f"Failed to upload {{REPORT_TYPE}} report to DefectDojo: {response.text}")
+    print(f"Failed to upload {{REPORT_TYPE}} report to DefectDojo. Status code: {response.status_code}", file=sys.stderr)
+    print(f"Response: {response.text}", file=sys.stderr)
+    sys.exit(1)
 """
     // Replace the placeholder with the actual report type
     scriptContent = scriptContent.replace('{{REPORT_TYPE}}', reportType)
