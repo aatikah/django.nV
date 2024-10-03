@@ -203,7 +203,10 @@ stages{
                 highAlerts.each { alert ->
                     echo "High Risk Alert: ${alert.alert} at ${alert.url}"
                 }
+                // Exit with code 1 if high-risk vulnerabilities are found
                 error "OWASP ZAP scan found high-risk vulnerabilities. Check the ZAP report for details."
+            }else {
+                echo "No high-risk vulnerabilities found."
             }
             
             // Read and parse JSON report
