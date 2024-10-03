@@ -197,11 +197,8 @@ stages{
                 }
                 error "OWASP ZAP scan found high-risk vulnerabilities. Check the ZAP report for details."
             }
-        }
-    }
-    post {
-        always {
-            // Publish HTML report
+
+             // Publish HTML report
             publishHTML(target: [
                 allowMissing: false,
                 alwaysLinkToLastBuild: false,
@@ -213,8 +210,13 @@ stages{
             
             // Optional: Publish JSON report as a build artifact
             archiveArtifacts artifacts: 'zap-scan-report.json', fingerprint: true
+
+            
         }
     }
+   
+           
+     
 }
 
    
