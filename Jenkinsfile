@@ -170,7 +170,7 @@ stages{
             def zapHome ='/opt/zaproxy' // Path to ZAP installation
             def targetURL = 'http://34.134.182.0'  // Update this to your application's URL
             def reportNameHtml = "zap-scan-report.html"
-            //def reportNameJson = "zap-scan-report.json"
+            def reportNameJson = "zap-scan-report.json"
             
             // Perform ZAP scan
             sh """
@@ -179,6 +179,7 @@ stages{
                     -quickurl ${targetURL} \
                     -quickprogress \
                     -quickout ${reportNameHtml} \
+                    -quickout ${reportNameJson} 
                 
             """
             
