@@ -286,7 +286,7 @@ stages{
             
             // Function to upload reports to DefectDojo
             def uploadToDefectDojo = {
-                def scriptContent = """
+    def scriptContent = '''
 import requests
 import json
 import sys
@@ -306,7 +306,7 @@ def upload_report(report_path, report_type):
         'verified': 'true',
     }
     
-    print(f"\n--- Attempting to upload {report_type} report ---")
+    print(f"--- Attempting to upload {report_type} report ---")
     print(f"Report path: {report_path}")
     print(f"URL: {url}")
     print(f"Headers: {json.dumps(headers, indent=2)}")
@@ -351,16 +351,15 @@ for report_path, report_type in reports:
     else:
         print(f"Failed to upload {report_type} report")
 
-print(f"\nSummary: Successfully uploaded {success_count} out of {len(reports)} reports")
+print(f"Summary: Successfully uploaded {success_count} out of {len(reports)} reports")
 
 if success_count < len(reports):
     sys.exit(1)  # Exit with error if not all reports were uploaded
-"""
-                writeFile file: 'upload_to_defectdojo.py', text: scriptContent
-                // Run the Python script in the virtual environment using bash
-                return sh(script: 'bash -c "source venv/bin/activate && python3 upload_to_defectdojo.py"', returnStatus: true)
-            }
-            
+'''
+    writeFile file: 'upload_to_defectdojo.py', text: scriptContent
+    // Run the Python script in the virtual environment using bash
+    return sh(script: 'bash -c "source venv/bin/activate && python3 upload_to_defectdojo.py"', returnStatus: true)
+}
             def uploadStatus = uploadToDefectDojo()
             
             if (uploadStatus != 0) {
