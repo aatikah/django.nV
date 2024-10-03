@@ -9,7 +9,7 @@ pipeline {
         DEFECTDOJO_API_KEY = credentials('DEFECTDOJO_API_KEY')
         DEFECTDOJO_URL = 'http://34.42.127.145:8080'
         PRODUCT_NAME = 'django-project'
-        ENGAGEMENT_NAME = '1'
+        ENGAGEMENT_ID = '1'
         
     }
      
@@ -297,7 +297,7 @@ headers = {
 }
 data = {
     'product_name': '${PRODUCT_NAME}',
-    'engagement_name': '${ENGAGEMENT_NAME}',
+    'engagement': '${ENGAGEMENT_ID}',
     'scan_type': '${reportType}',
     'active': 'true',
     'verified': 'true',
