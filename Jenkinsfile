@@ -283,68 +283,85 @@ stages{
                 python3 -m venv venv
                 bash -c "source venv/bin/activate && pip install requests"
             '''
-
-            // Function to upload a report to DefectDojo
-       def uploadToDefectDojo = { reportPath, reportType ->
-    def scriptContent = """
+            
+            // Function to upload reports to DefectDojo
+            def uploadToDefectDojo = {
+                def scriptContent = """
 import requests
 import json
 import sys
+import os
 
-url = "${DEFECTDOJO_URL}/api/v2/import-scan/"
-headers = {
-    'Authorization': 'Token ${DEFECTDOJO_API_KEY}',
-    'Accept': 'application/json'
-}
-data = {
-    'product_name': '${PRODUCT_NAME}',
-    'engagement': '${ENGAGEMENT_ID}',
-    'scan_type': '{{REPORT_TYPE}}',
-    'active': 'true',
-    'verified': 'true',
-}
-files = {'file': open('${reportPath}', 'rb')}
-
-print(f"Sending request to: {url}")
-print(f"Headers: {json.dumps(headers, indent=2)}")
-print(f"Data: {json.dumps(data, indent=2)}")
-print(f"File: {reportPath}")
-
-try:
-    response = requests.post(url, headers=headers, data=data, files=files)
-    print(f"Response status code: {response.status_code}")
-    print(f"Response content: {response.text}")
+def upload_report(report_path, report_type):
+    url = "${DEFECTDOJO_URL}/api/v2/import-scan/"
+    headers = {
+        'Authorization': 'Token ${DEFECTDOJO_API_KEY}',
+        'Accept': 'application/json'
+    }
+    data = {
+        'product_name': '${PRODUCT_NAME}',
+        'engagement': '${ENGAGEMENT_ID}',
+        'scan_type': report_type,
+        'active': 'true',
+        'verified': 'true',
+    }
     
-    response.raise_for_status()  # Raises an HTTPError for bad responses (4xx or 5xx)
+    print(f"Attempting to upload {report_type} report from {report_path}")
+    print(f"Sending request to: {url}")
+    print(f"Headers: {json.dumps(headers, indent=2)}")
+    print(f"Data: {json.dumps(data, indent=2)}")
     
-    print("Upload successful")
-except requests.exceptions.RequestException as e:
-    print(f"Error occurred during the request: {str(e)}", file=sys.stderr)
-    sys.exit(1)
+    try:
+        if not os.path.exists(report_path):
+            print(f"Error: Report file {report_path} does not exist")
+            return False
+        
+        with open(report_path, 'rb') as file:
+            files = {'file': file}
+            response = requests.post(url, headers=headers, data=data, files=files)
+        
+        print(f"Response status code: {response.status_code}")
+        print(f"Response content: {response.text}")
+        
+        if response.status_code == 201:
+            print(f"Successfully uploaded {report_type} report")
+            return True
+        else:
+            print(f"Failed to upload {report_type} report. Status code: {response.status_code}")
+            return False
+    except Exception as e:
+        print(f"Error occurred while uploading {report_type} report: {str(e)}")
+        return False
 
-if response.status_code != 201:
-    print(f"Failed to upload {{REPORT_TYPE}} report to DefectDojo. Status code: {response.status_code}", file=sys.stderr)
-    print(f"Response: {response.text}", file=sys.stderr)
-    sys.exit(1)
+# Attempt to upload each report
+reports = [
+    ('gitleaks-report.json', 'Gitleaks Scan'),
+    ('report/dependency-check-report.json', 'Dependency Check Scan'),
+    ('nikto_output.json', 'Nikto Scan')
+]
+
+success_count = 0
+for report_path, report_type in reports:
+    if upload_report(report_path, report_type):
+        success_count += 1
+    else:
+        print(f"Failed to upload {report_type} report")
+
+print(f"Successfully uploaded {success_count} out of {len(reports)} reports")
+
+if success_count < len(reports):
+    sys.exit(1)  # Exit with error if not all reports were uploaded
 """
-    // Replace the placeholder with the actual report type
-    scriptContent = scriptContent.replace('{{REPORT_TYPE}}', reportType)
-    writeFile file: 'upload_to_defectdojo.py', text: scriptContent
-    // Run the Python script in the virtual environment using bash
-    sh 'bash -c "source venv/bin/activate && python3 upload_to_defectdojo.py"'
-}
-
-            // Upload Gitleaks report
-            uploadToDefectDojo('gitleaks-report.json', 'Gitleaks Scan')
-
-            // Upload OWASP Dependency Check report
-            uploadToDefectDojo('report/dependency-check-report.json', 'Dependency Check Scan')
-
-            // Upload Bandit report
-            //uploadToDefectDojo('bandit-report.json', 'Bandit Scan')
-
-            // Upload Nikto report
-            uploadToDefectDojo('nikto_output.json', 'Nikto Scan')
+                writeFile file: 'upload_to_defectdojo.py', text: scriptContent
+                // Run the Python script in the virtual environment using bash
+                return sh(script: 'bash -c "source venv/bin/activate && python3 upload_to_defectdojo.py"', returnStatus: true)
+            }
+            
+            def uploadStatus = uploadToDefectDojo()
+            
+            if (uploadStatus != 0) {
+                unstable('Some reports failed to upload to DefectDojo')
+            }
         }
     }
 }
