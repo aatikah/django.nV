@@ -177,8 +177,7 @@ stages{
                 
                 ${zapHome}/zap.sh -cmd \
                     -quickurl ${targetURL} \
-                    -quickprogress \
-                    -quickout ${reportNameHtml} \
+                    -quickprogress 
 
             """
             
