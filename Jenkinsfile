@@ -243,6 +243,33 @@ stages{
      
 }
 
+    stage('DAST with Nikto') {
+    steps {
+        script {
+
+            def TARGET_URL = 'http://34.134.182.0'
+            // Run Nikto scan
+            sh """
+                nikto -h \${TARGET_URL} -output nikto_output.json -Format json
+                nikto -h \${TARGET_URL} -output nikto_output.html -Format html
+            """
+            
+            // Archive the results
+            archiveArtifacts artifacts: 'nikto_output.*', allowEmptyArchive: true
+            
+            // Optional: Publish HTML report
+            publishHTML(target: [
+                allowMissing: false,
+                alwaysLinkToLastBuild: false,
+                keepAll: true,
+                reportDir: '.',
+                reportFiles: 'nikto_output.html',
+                reportName: 'Nikto DAST Report'
+            ])
+        }
+    }
+}
+
    
 }
 }
