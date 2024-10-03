@@ -306,8 +306,9 @@ def upload_report(report_path, report_type):
         'verified': 'true',
     }
     
-    print(f"Attempting to upload {report_type} report from {report_path}")
-    print(f"Sending request to: {url}")
+    print(f"\n--- Attempting to upload {report_type} report ---")
+    print(f"Report path: {report_path}")
+    print(f"URL: {url}")
     print(f"Headers: {json.dumps(headers, indent=2)}")
     print(f"Data: {json.dumps(data, indent=2)}")
     
@@ -315,6 +316,9 @@ def upload_report(report_path, report_type):
         if not os.path.exists(report_path):
             print(f"Error: Report file {report_path} does not exist")
             return False
+        
+        file_size = os.path.getsize(report_path)
+        print(f"File size: {file_size} bytes")
         
         with open(report_path, 'rb') as file:
             files = {'file': file}
@@ -347,7 +351,7 @@ for report_path, report_type in reports:
     else:
         print(f"Failed to upload {report_type} report")
 
-print(f"Successfully uploaded {success_count} out of {len(reports)} reports")
+print(f"\nSummary: Successfully uploaded {success_count} out of {len(reports)} reports")
 
 if success_count < len(reports):
     sys.exit(1)  # Exit with error if not all reports were uploaded
