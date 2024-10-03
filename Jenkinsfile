@@ -8,7 +8,7 @@ pipeline {
         remoteHost = '34.134.182.0'
         DEFECTDOJO_API_KEY = credentials('DEFECTDOJO_API_KEY')
         DEFECTDOJO_URL = 'http://34.42.127.145:8080'
-        PRODUCT_NAME = 'django-project	'
+        PRODUCT_NAME = 'django-project'
         ENGAGEMENT_NAME = '1'
         
     }
@@ -331,28 +331,28 @@ stages{
                     // Function to upload a report to DefectDojo
                     def uploadToDefectDojo = { reportPath, reportType ->
                         def scriptContent = """
-import requests
-import json
-
-url = "${DEFECTDOJO_URL}/api/v2/import-scan/"
-headers = {
-    'Authorization': 'Token ${DEFECTDOJO_API_KEY}',
-    'Accept': 'application/json'
-}
-data = {
-    'product_name': '${PRODUCT_NAME}',
-    'engagement_name': '${ENGAGEMENT_NAME}',
-    'scan_type': '${reportType}',
-    'active': 'true',
-    'verified': 'true',
-}
-files = {'file': open('${reportPath}', 'rb')}
-
-response = requests.post(url, headers=headers, data=data, files=files)
-print(response.text)
-if response.status_code != 201:
-    raise Exception(f"Failed to upload {reportType} report to DefectDojo")
-"""
+                            import requests
+                            import json
+                            
+                            url = "${DEFECTDOJO_URL}/api/v2/import-scan/"
+                            headers = {
+                                'Authorization': 'Token ${DEFECTDOJO_API_KEY}',
+                                'Accept': 'application/json'
+                            }
+                            data = {
+                                'product_name': '${PRODUCT_NAME}',
+                                'engagement_name': '${ENGAGEMENT_NAME}',
+                                'scan_type': '${reportType}',
+                                'active': 'true',
+                                'verified': 'true',
+                            }
+                            files = {'file': open('${reportPath}', 'rb')}
+                            
+                            response = requests.post(url, headers=headers, data=data, files=files)
+                            print(response.text)
+                            if response.status_code != 201:
+                                raise Exception(f"Failed to upload {reportType} report to DefectDojo: {response.text}")
+                            """
                         writeFile file: 'upload_to_defectdojo.py', text: scriptContent
                         sh 'python3 upload_to_defectdojo.py'
                     }
