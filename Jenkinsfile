@@ -179,7 +179,7 @@ stages{
                     -quickurl ${targetURL} \
                     -quickprogress \
                     -quickout ${reportNameHtml} \
-                    -quickjson ${reportNameJson}
+                    -quickout ${reportNameJson}
             """
             
             // Archive the ZAP reports
