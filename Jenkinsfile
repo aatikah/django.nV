@@ -325,8 +325,7 @@ stages{
                     // Install Python requests library if not already available
                     sh '''
                     python3 -m venv venv
-                    source venv/bin/activate
-                    pip install requests
+                    bash -c "source venv/bin/activate && pip install requests"
                     '''
 
                     // Function to upload a report to DefectDojo
