@@ -211,7 +211,7 @@ stages{
             ])
             
             // Optional: Publish JSON report as a build artifact
-            archiveArtifacts artifacts: 'zap-scan-report.json', fingerprint: true
+            //archiveArtifacts artifacts: 'zap-scan-report.json', fingerprint: true
 
             
         }
