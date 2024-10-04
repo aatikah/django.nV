@@ -182,10 +182,9 @@ stages{
                 ${zapHome}/zap.sh -cmd \
                     -quickurl ${remoteHost} \
                     -quickprogress \
-                    -quickout ${reportNameHtml}, ${reportNameXml}
-                
-                   
-
+                    -quickout ${reportNameHtml} \
+                    -quickout ${reportNameXml} 
+              
             """
             
             // Archive the ZAP reports
