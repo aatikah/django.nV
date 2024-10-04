@@ -386,7 +386,7 @@ def upload_report(report_path, report_type):
 # Attempt to upload each report
 reports = [
     ('gitleaks-report.json', 'Gitleaks Scan'),
-    ('report/dependency-check-report.json', 'Dependency Check Scan'),
+    ('dependency-check-report.json', 'Dependency Check Scan'),
     ('nikto_output.json', 'Nikto Scan'),
     ('bandit-report.json', 'Bandit Scan')
     
