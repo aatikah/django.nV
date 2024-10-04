@@ -355,7 +355,8 @@ def upload_report(report_path, report_type):
 reports = [
     ('gitleaks-report.json', 'Gitleaks Scan'),
     ('report/dependency-check-report.xml', 'Dependency Check Scan'),
-    ('nikto_output.json', 'Nikto Scan')
+    ('nikto_output.json', 'Nikto Scan'),
+    ('zap-scan-report.xml', 'ZAP Scan')
    
     
 ]
