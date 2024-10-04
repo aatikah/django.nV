@@ -339,7 +339,7 @@ def upload_report(report_path, report_type):
 # Attempt to upload each report
 reports = [
     ('gitleaks-report.json', 'Gitleaks Scan'),
-    ('/home/jenkins/workspace/django/report/dependency-check-report.json', 'Dependency Check Scan'),
+    ('report/dependency-check-report.xml', 'Dependency Check Scan'),
     ('nikto_output.json', 'Nikto Scan')
 ]
 
