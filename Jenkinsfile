@@ -187,7 +187,7 @@ stages{
     ${zapHome}/zap.sh -cmd \
         -quickurl http://${remoteHost} \
         -quickprogress \
-        -quickout ${WORKSPACE}/${reportNameHtml}
+        -quickout ${WORKSPACE}/${reportNameHtml} \
         -quickout ${WORKSPACE}/${reportNameXml}
 """, returnStdout: true).trim()
 echo "ZAP Output: ${zapOutput}"
