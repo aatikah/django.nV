@@ -183,26 +183,22 @@ stages{
                //     -quickprogress \
                //     -quickout ${WORKSPACE}/${reportNameHtml}    
            // """
-            def zapOutputHtml = sh(script: """
-    ${zapHome}/zap.sh -cmd \
-        -quickurl http://${remoteHost} \
-        -quickprogress \
-        -quickout ${WORKSPACE}/${reportNameHtml} 
-""", returnStdout: true).trim()
-echo "ZAP Output: ${zapOutputHtml}"
+            sh """
+            ${zapHome}/zap.sh -cmd \
+                -quickurl http://${remoteHost} \
+                -quickprogress \
+                -quickout ${WORKSPACE}/${reportNameHtml} 
 
-            def zapOutputXml = sh(script: """
-    ${zapHome}/zap.sh -cmd \
-        -quickurl http://${remoteHost} \
-        -quickprogress \
-        -quickout ${WORKSPACE}/${reportNameXml}
-""", returnStdout: true).trim()
-echo "ZAP Output: ${zapOutputXml}"
+             ${zapHome}/zap.sh -cmd \
+                -quickurl http://${remoteHost} \
+                -quickprogress \
+                -quickout ${WORKSPACE}/${reportNameXml}
+                """
+          
             
             // Archive the ZAP reports
             archiveArtifacts artifacts: "${reportNameHtml},${reportNameXml}", fingerprint: true
-            //archiveArtifacts artifacts: "${reportNameHtml}", fingerprint: true
-            //archiveArtifacts artifacts: "${reportNameXml}", fingerprint: true
+          
 
 
             // Read and parse the HTML report
