@@ -189,7 +189,7 @@ stages{
             
             // Archive the ZAP reports
            // archiveArtifacts artifacts: "${reportNameHtml},${reportNameXml}", fingerprint: true
-            archiveArtifacts artifacts: "${reportNameHtml}", fingerprint: true
+            //archiveArtifacts artifacts: "${reportNameHtml}", fingerprint: true
 
 
             // Read and parse the HTML report
