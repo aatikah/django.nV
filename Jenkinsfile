@@ -177,15 +177,19 @@ stages{
             //def reportNameXml = "zap-scan-report.xml"
             
             // Perform ZAP scan
-            sh """
-                
-                ${zapHome}/zap.sh -cmd \
-                    -quickurl ${remoteHost} \
-                    -quickprogress \
-                    -quickout ${reportNameHtml} 
-                    
-              
-            """
+            //sh """
+              //  ${zapHome}/zap.sh -cmd \
+               //     -quickurl ${remoteHost} \
+               //     -quickprogress \
+               //     -quickout ${reportNameHtml}    
+           // """
+            def zapOutput = sh(script: """
+    ${zapHome}/zap.sh -cmd \
+        -quickurl ${remoteHost} \
+        -quickprogress \
+        -quickout ${reportNameHtml}
+""", returnStdout: true).trim()
+echo "ZAP Output: ${zapOutput}"
             
             // Archive the ZAP reports
            // archiveArtifacts artifacts: "${reportNameHtml},${reportNameXml}", fingerprint: true
