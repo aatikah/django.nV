@@ -181,7 +181,8 @@ stages{
                 
                 ${zapHome}/zap.sh -cmd \
                     -quickurl ${remoteHost} \
-                    -quickprogress 
+                    -quickprogress \
+                    -quickout output
 
             """
             
