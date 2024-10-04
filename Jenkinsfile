@@ -173,8 +173,8 @@ stages{
         script {
             def zapHome ='/opt/zaproxy' // Path to ZAP installation
             //def targetURL = 'http://34.134.182.0'  // Update this to your application's URL
-            def reportNameHtml = "${WORKSPACE}/zap-scan-report.html"
-            //def reportNameXml = "zap-scan-report.xml"
+            def reportNameHtml = "zap-scan-report.html"
+            def reportNameXml = "zap-scan-report.xml"
             
             // Perform ZAP scan
             //sh """
@@ -192,8 +192,8 @@ stages{
 echo "ZAP Output: ${zapOutput}"
             
             // Archive the ZAP reports
-           // archiveArtifacts artifacts: "${reportNameHtml},${reportNameXml}", fingerprint: true
-            archiveArtifacts artifacts: "${reportNameHtml}", fingerprint: true
+            archiveArtifacts artifacts: "${reportNameHtml},${reportNameXml}", fingerprint: true
+            //archiveArtifacts artifacts: "${reportNameHtml}", fingerprint: true
 
 
             // Read and parse the HTML report
