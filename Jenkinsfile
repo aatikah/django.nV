@@ -33,15 +33,6 @@ stages{
                     // Archive the reports as artifacts
                         archiveArtifacts artifacts: 'gitleaks-report.json', allowEmptyArchive: true
 
-            // Publish HTML report
-                    publishHTML(target: [
-                        allowMissing: false,
-                        alwaysLinkToLastBuild: false,
-                        keepAll: true,
-                        reportDir: '.',
-                        reportFiles: 'bandit-report.html',
-                        reportName: 'Bandit Security Scan Report'
-                    ])
 
                 }
                  // Display the contents of the report in a separate step
@@ -92,6 +83,52 @@ stages{
         }
 
     //BANDIT STAGE
+
+    stage('SAST With Bandit Security Scan') {
+    steps {
+        script {
+           
+            // Run Bandit scan and generate reports
+            sh '''
+                python3 -m venv bandit_venv
+                . bandit_venv/bin/activate
+                pip install --upgrade pip
+                pip install bandit
+                
+            
+                bandit -r . -f json -o bandit-report.json --exit-zero
+                bandit -r . -f html -o bandit-report.html --exit-zero
+
+                deactivate
+            '''
+            
+            // Archive the reports as artifacts
+            archiveArtifacts artifacts: 'bandit-report.json,bandit-report.html', allowEmptyArchive: true
+
+            // Publish HTML report
+            publishHTML(target: [
+                allowMissing: false,
+                alwaysLinkToLastBuild: false,
+                keepAll: true,
+                reportDir: '.',
+                reportFiles: 'bandit-report.html',
+                reportName: 'Bandit Security Scan Report'
+            ])
+            
+            // Parse JSON report to check for issues
+            script {
+                def jsonReport = readJSON file: 'bandit-report.json'
+                def issueCount = jsonReport.results.size()
+                if (issueCount > 0) {
+                    echo "Bandit found ${issueCount} potential security issue(s). Please review the report."
+                } else {
+                    echo "Bandit scan completed successfully with no issues found."
+                }
+            }
+        }
+    }
+    
+}
 
    
     stage('Build and Push Docker Image') {
@@ -352,8 +389,12 @@ def upload_report(report_path, report_type):
 reports = [
     ('gitleaks-report.json', 'Gitleaks Scan'),
     ('report/dependency-check-report.xml', 'Dependency Check Scan'),
-    ('nikto_output.json', 'Nikto Scan'),
-    ('zap-scan-report.xml', 'ZAP Scan')
+    ('bandit-report.json', 'Bandit Scan'),
+    ('zap-scan-report.xml', 'ZAP Scan'),
+    ('nikto_output.json', 'Nikto Scan')
+    
+    
+    
    
     
 ]
