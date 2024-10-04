@@ -182,8 +182,8 @@ stages{
                 ${zapHome}/zap.sh -cmd \
                     -quickurl ${remoteHost} \
                     -quickprogress \
-                    -quickout output.html \
-                    -quickout output.xml
+                    -quickout ${reportNameHtml}, ${reportNameXml}
+                
                    
 
             """
