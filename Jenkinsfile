@@ -339,11 +339,10 @@ def upload_report(report_path, report_type):
 # Attempt to upload each report
 reports = [
     ('gitleaks-report.json', 'Gitleaks Scan'),
-    ('dependency-check-report.json', 'Dependency Check Scan'),
-    ('nikto_output.json', 'Nikto Scan'),
-    ('bandit-report.json', 'Bandit Scan')
-    
+    ('/home/jenkins/workspace/django/report/dependency-check-report.json', 'Dependency Check Scan'),
+    ('nikto_output.json', 'Nikto Scan')
 ]
+// ('bandit-report.json', 'Bandit Scan')
 
 success_count = 0
 for report_path, report_type in reports:
