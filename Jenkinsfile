@@ -181,13 +181,13 @@ stages{
               //  ${zapHome}/zap.sh -cmd \
                //     -quickurl http://${remoteHost} \
                //     -quickprogress \
-               //     -quickout ${reportNameHtml}    
+               //     -quickout ${WORKSPACE}/${reportNameHtml}    
            // """
             def zapOutput = sh(script: """
     ${zapHome}/zap.sh -cmd \
         -quickurl http://${remoteHost} \
         -quickprogress \
-        -quickout ${reportNameHtml}
+        -quickout ${WORKSPACE}/${reportNameHtml}
 """, returnStdout: true).trim()
 echo "ZAP Output: ${zapOutput}"
             
