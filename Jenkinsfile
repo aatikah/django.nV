@@ -297,7 +297,8 @@ echo "ZAP Output: ${zapOutputXml}"
                 python3 -m venv venv
                 bash -c "source venv/bin/activate && pip install requests"
             '''
-            
+            // Use Jenkins credentials binding to securely inject sensitive values
+            withCredentials([string(credentialsId: 'DEFECTDOJO_API_KEY', variable: 'DEFECTDOJO_API_KEY')]) {
             // Function to upload reports to DefectDojo
             def uploadToDefectDojo = {
     def scriptContent = """
@@ -309,7 +310,7 @@ import os
 def upload_report(report_path, report_type):
     url = "${DEFECTDOJO_URL}/api/v2/import-scan/"
     headers = {
-        'Authorization': 'Token ${DEFECTDOJO_API_KEY}',
+        'Authorization': f'Token {os.getenv("DEFECTDOJO_API_KEY")}',
         'Accept': 'application/json'
     }
     data = {
@@ -383,7 +384,9 @@ if success_count < len(reports):
             if (uploadStatus != 0) {
                 unstable('Some reports failed to upload to DefectDojo')
             }
-        }
+        
+            }   
+            }
     }
 }
 
