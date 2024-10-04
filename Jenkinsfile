@@ -174,7 +174,7 @@ stages{
             def zapHome ='/opt/zaproxy' // Path to ZAP installation
             //def targetURL = 'http://34.134.182.0'  // Update this to your application's URL
             def reportNameHtml = "zap-scan-report.html"
-            //def reportNameJson = "zap-scan-report.json"
+            def reportNameXml = "zap-scan-report.xml"
             
             // Perform ZAP scan
             sh """
@@ -186,8 +186,8 @@ stages{
             """
             
             // Archive the ZAP reports
-            //archiveArtifacts artifacts: "${reportNameHtml},${reportNameJson}", fingerprint: true
-            archiveArtifacts artifacts: "${reportNameHtml}", fingerprint: true
+            archiveArtifacts artifacts: "${reportNameHtml},${reportNameXml}", fingerprint: true
+           // archiveArtifacts artifacts: "${reportNameHtml}", fingerprint: true
 
 
             // Read and parse the HTML report
@@ -340,7 +340,9 @@ def upload_report(report_path, report_type):
 reports = [
     ('gitleaks-report.json', 'Gitleaks Scan'),
     ('report/dependency-check-report.xml', 'Dependency Check Scan'),
-    ('nikto_output.json', 'Nikto Scan')
+    ('nikto_output.json', 'Nikto Scan'),
+    ('zap-scan-report.xml', 'ZAP Scan')
+    
 ]
 
 
