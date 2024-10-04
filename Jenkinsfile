@@ -342,7 +342,7 @@ reports = [
     ('/home/jenkins/workspace/django/report/dependency-check-report.json', 'Dependency Check Scan'),
     ('nikto_output.json', 'Nikto Scan')
 ]
-// ('bandit-report.json', 'Bandit Scan')
+
 
 success_count = 0
 for report_path, report_type in reports:
