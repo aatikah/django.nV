@@ -200,9 +200,9 @@ echo "ZAP Output: ${zapOutputHtml}"
 echo "ZAP Output: ${zapOutputXml}"
             
             // Archive the ZAP reports
-            //archiveArtifacts artifacts: "${reportNameHtml},${reportNameXml}", fingerprint: true
-            archiveArtifacts artifacts: "${reportNameHtml}", fingerprint: true
-            archiveArtifacts artifacts: "${reportNameXml}", fingerprint: true
+            archiveArtifacts artifacts: "${reportNameHtml},${reportNameXml}", fingerprint: true
+            //archiveArtifacts artifacts: "${reportNameHtml}", fingerprint: true
+            //archiveArtifacts artifacts: "${reportNameXml}", fingerprint: true
 
 
             // Read and parse the HTML report
