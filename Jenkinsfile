@@ -179,13 +179,13 @@ stages{
             // Perform ZAP scan
             //sh """
               //  ${zapHome}/zap.sh -cmd \
-               //     -quickurl ${remoteHost} \
+               //     -quickurl http://${remoteHost} \
                //     -quickprogress \
                //     -quickout ${reportNameHtml}    
            // """
             def zapOutput = sh(script: """
     ${zapHome}/zap.sh -cmd \
-        -quickurl ${remoteHost} \
+        -quickurl http://${remoteHost} \
         -quickprogress \
         -quickout ${reportNameHtml}
 """, returnStdout: true).trim()
@@ -260,8 +260,8 @@ echo "ZAP Output: ${zapOutput}"
             //def TARGET_URL = 'http://34.134.182.0'
             // Run Nikto scan
             sh """
-                /home/abuabdillah5444/nikto/program/nikto.pl -h ${remoteHost} -output nikto_output.json -Format json
-                /home/abuabdillah5444/nikto/program/nikto.pl -h ${remoteHost} -output nikto_output.html -Format html
+                /home/abuabdillah5444/nikto/program/nikto.pl -h http://${remoteHost} -output nikto_output.json -Format json
+                /home/abuabdillah5444/nikto/program/nikto.pl -h http://${remoteHost} -output nikto_output.html -Format html
             """
             
             // Archive the results
