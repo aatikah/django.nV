@@ -9,8 +9,6 @@ pipeline {
         DEFECTDOJO_API_KEY = credentials('DEFECTDOJO_API_KEY')
         DEFECTDOJO_URL = 'http://34.42.127.145:8080'
         PRODUCT_NAME = 'django-project'
-        ENGAGEMENT_ID = '1'
-        
     }
      
 
@@ -340,7 +338,7 @@ import json
 import sys
 import os
 
-def upload_report(report_path, report_type):
+def upload_report(report_path, report_type, engagement_id):
     url = "${DEFECTDOJO_URL}/api/v2/import-scan/"
     headers = {
         'Authorization': f'Token {os.getenv("DEFECTDOJO_API_KEY")}',
@@ -348,7 +346,7 @@ def upload_report(report_path, report_type):
     }
     data = {
         'product_name': '${PRODUCT_NAME}',
-        'engagement': '${ENGAGEMENT_ID}',
+        'engagement': engagement_id,
         'scan_type': report_type,
         'active': 'true',
         'verified': 'true',
@@ -387,22 +385,18 @@ def upload_report(report_path, report_type):
 
 # Attempt to upload each report
 reports = [
-    ('gitleaks-report.json', 'Gitleaks Scan'),
-    ('report/dependency-check-report.xml', 'Dependency Check Scan'),
-    ('bandit-report.json', 'Bandit Scan'),
-    ('zap-scan-report.xml', 'ZAP Scan'),
-    ('nikto_output.json', 'Nikto Scan')
-    
-    
-    
+    ('gitleaks-report.json', 'Gitleaks Scan', '3'),
+    ('report/dependency-check-report.xml', 'Dependency Check Scan', '4'),
+    ('bandit-report.json', 'Bandit Scan', '5'),
+    ('zap-scan-report.xml', 'ZAP Scan', '6'),
+    ('nikto_output.json', 'Nikto Scan', '7')
    
-    
 ]
 
 
 success_count = 0
-for report_path, report_type in reports:
-    if upload_report(report_path, report_type):
+for report_path, report_type, engagement_id  in reports:
+    if upload_report(report_path, report_type, engagement_id ):
         success_count += 1
     else:
         print(f"Failed to upload {report_type} report")
